@@ -10,7 +10,10 @@ from pathlib import Path
 from typing import Dict, Any, List
 from openai import AsyncOpenAI
 
-_client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+_client = AsyncOpenAI(
+    api_key=os.getenv("OPENAI_API_KEY"),
+    timeout=50.0,  # 50s timeout for OpenAI API calls
+)
 
 MODEL = "gpt-4o-mini"
 

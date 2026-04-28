@@ -7,21 +7,30 @@
 const API_BASE = window.CB_API_URL || 'http://localhost:8000';
 
 /* ── Internal fetch wrapper ── */
-async function _request(method, path, body = null) {
+async function _request(method, path, body = null, timeoutMs = 60000) {
   const opts = {
     method,
     headers: { 'Content-Type': 'application/json' },
   };
   if (body) opts.body = JSON.stringify(body);
 
-  const res = await fetch(`${API_BASE}${path}`, opts);
-  const data = await res.json();
+  /* Use AbortController for timeout */
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  opts.signal = controller.signal;
 
-  if (!res.ok) {
-    const msg = data.detail || data.message || 'Something went wrong. Please try again.';
-    throw new Error(msg);
+  try {
+    const res = await fetch(`${API_BASE}${path}`, opts);
+    const data = await res.json();
+
+    if (!res.ok) {
+      const msg = data.detail || data.message || 'Something went wrong. Please try again.';
+      throw new Error(msg);
+    }
+    return data;
+  } finally {
+    clearTimeout(timeoutId);
   }
-  return data;
 }
 
 /* ─────────────────────────────────────────
@@ -30,7 +39,8 @@ async function _request(method, path, body = null) {
 ───────────────────────────────────────── */
 export async function submitQuiz1(payload) {
   // payload: { name, email, answers: { q1: "a", q2: "b", ... } }
-  return _request('POST', '/api/submit-quiz1', payload);
+  // Increased timeout (90s) because OpenAI generation takes 10-15 seconds
+  return _request('POST', '/api/submit-quiz1', payload, 90000);
 }
 
 /* ─────────────────────────────────────────
@@ -39,7 +49,8 @@ export async function submitQuiz1(payload) {
 ───────────────────────────────────────── */
 export async function submitQuiz2(payload) {
   // payload: { name, email, partner_name, answers: { q1: "a", ... } }
-  return _request('POST', '/api/submit-quiz2', payload);
+  // Increased timeout (90s) because OpenAI generation takes 10-15 seconds
+  return _request('POST', '/api/submit-quiz2', payload, 90000);
 }
 
 /* ─────────────────────────────────────────
