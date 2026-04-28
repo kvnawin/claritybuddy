@@ -5,4 +5,4 @@ supabase==2.4.3
 razorpay==1.4.2
 python-dotenv==1.0.1
 pydantic[email]==2.7.1
-setuptools>=65.0.0
+setuptools<82
