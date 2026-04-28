@@ -494,13 +494,20 @@ new ClarityQuiz({
   quizType:  'quiz1',
   questions: QUESTIONS,
   onComplete: (reportId) => {
-    /* animate loader steps */
+    /* animate loader steps and then redirect */
     let step = 1;
     const stepInterval = setInterval(() => {
       step++;
       const el = document.getElementById(`ls-${step}`);
       if (el) el.classList.add('active');
-      if (step >= 3) clearInterval(stepInterval);
+      if (step >= 3) {
+        clearInterval(stepInterval);
+        /* Redirect to report after animation completes */
+        setTimeout(() => {
+          console.log('[Quiz] Animation complete, redirecting to report:', reportId);
+          window.location.href = `report.html?id=${reportId}`;
+        }, 800);
+      }
     }, 2000);
   },
 });
