@@ -169,7 +169,7 @@ p { color: var(--ink-mid); line-height: 1.75; }
 .btn--cream:hover { background: var(--gold-pale); border-color: var(--gold-pale); }
 
 .btn--pill { border-radius: var(--radius-pill); }
-.btn--full { width: 100%; }
+.btn--full { width: 100%; white-space: normal; }
 .btn--sm { font-size: 11px; padding: 10px 20px; }
 .btn--lg { font-size: 13px; padding: 18px 40px; }
 
