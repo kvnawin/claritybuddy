@@ -444,14 +444,14 @@
 
         <!-- Plan tabs -->
         <div class="plan-tabs">
-          <button class="plan-tab active" data-plan="single" onclick="selectPlan(this,'single')">Single ₹299</button>
+          <button class="plan-tab active" data-plan="quiz1" onclick="selectPlan(this,'quiz1')" id="plan-tab-main">Report ₹199</button>
           <!-- MVP: combo hidden until Quiz 2 post-payment flow is built
           <button class="plan-tab" data-plan="combo" onclick="selectPlan(this,'combo')">Combo ₹499</button>
           -->
           <!-- MVP: subscription hidden <button class="plan-tab" data-plan="monthly" onclick="selectPlan(this,'monthly')">Monthly ₹399</button> -->
         </div>
 
-        <div class="unlock-card__price"><sup>₹</sup><span id="plan-price">299</span></div>
+        <div class="unlock-card__price"><sup>₹</sup><span id="plan-price">199</span></div>
         <p class="unlock-card__price-note" id="plan-note">One-time · Full report for this quiz</p>
 
         <button id="btn-unlock" class="btn btn--cream btn--full btn--lg" onclick="handleUnlock()">
@@ -555,7 +555,7 @@ const PERSONAS = {
 };
 
 let currentReportId = null;
-let currentPlan = 'single';
+let currentPlan = 'quiz1';
 
 /* ── Boot ── */
 async function init() {
@@ -590,14 +590,22 @@ async function loadPreview(reportId) {
     return;
   }
 
+  /* set plan and price based on which quiz this report is for */
+  currentPlan = data.quiz_type || 'quiz1';
+  document.getElementById('plan-price').textContent = PRICE_DISPLAY[currentPlan];
+  document.getElementById('plan-note').textContent  = PLAN_NOTES[currentPlan];
+  const tab = document.getElementById('plan-tab-main');
+  if (tab) { tab.dataset.plan = currentPlan; tab.textContent = `Report ₹${PRICE_DISPLAY[currentPlan]}`; }
+
   renderHero(data.archetype, data.score);
   renderArchetypeTeaser(data.archetype);
   document.getElementById('page-loader').style.display = 'none';
   document.getElementById('report-content').style.display = 'block';
 
   /* animate score bar */
+  const maxScore = data.quiz_type === 'quiz2' ? 60 : 100;
   setTimeout(() => {
-    document.getElementById('score-fill').style.width = data.score + '%';
+    document.getElementById('score-fill').style.width = (data.score / maxScore * 100) + '%';
   }, 300);
 }
 
@@ -665,8 +673,10 @@ function renderPrompts(prompts) {
 }
 
 /* ── Plan selection ── */
-const PRICE_DISPLAY = { single: '299', combo: '499', monthly: '399', annual: '2,999' };
+const PRICE_DISPLAY = { quiz1: '199', quiz2: '299', single: '199', combo: '499', monthly: '399', annual: '2,999' };
 const PLAN_NOTES    = {
+  quiz1:   'One-time · Full Self Reflection Report',
+  quiz2:   'One-time · Full Compatibility Report',
   single:  'One-time · Full report for this quiz',
   combo:   'One-time · Both Quiz 1 + Quiz 2 reports',
   monthly: 'Per month · AI Coach + retake every 90 days',

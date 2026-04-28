@@ -10,7 +10,9 @@ import razorpay
 
 # Prices in paise (INR × 100)
 PLAN_PRICES = {
-    "single":  29900,
+    "quiz1":   19900,   # ₹199 — Self Reflection report
+    "quiz2":   29900,   # ₹299 — Compatibility report
+    "single":  19900,   # legacy fallback
     "combo":   49900,
     "monthly": 39900,
     "annual":  299900,
