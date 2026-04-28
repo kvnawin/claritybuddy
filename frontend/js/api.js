@@ -20,14 +20,20 @@ async function _request(method, path, body = null, timeoutMs = 60000) {
   opts.signal = controller.signal;
 
   try {
+    console.log(`[API] ${method} ${path} (timeout: ${timeoutMs}ms)`, body);
     const res = await fetch(`${API_BASE}${path}`, opts);
     const data = await res.json();
+    console.log(`[API] Response: ${res.status}`, data);
 
     if (!res.ok) {
       const msg = data.detail || data.message || 'Something went wrong. Please try again.';
+      console.error(`[API] Error ${res.status}: ${msg}`);
       throw new Error(msg);
     }
     return data;
+  } catch (err) {
+    console.error(`[API] Fetch failed:`, err.message);
+    throw err;
   } finally {
     clearTimeout(timeoutId);
   }

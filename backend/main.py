@@ -6,12 +6,17 @@ Run locally: uvicorn main:app --reload --port 8000
 
 import os
 import json
+import logging
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from dotenv import load_dotenv
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 from models import (
     Quiz1Payload, Quiz2Payload, QuizResponse,
@@ -96,7 +101,8 @@ async def submit_quiz1(payload: Quiz1Payload):
         )
 
     except Exception as e:
-        # Don't expose internal errors
+        # Log the actual error for debugging
+        logger.error(f"Quiz 1 generation failed: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Report generation failed. Please try again.")
 
 
@@ -133,6 +139,7 @@ async def submit_quiz2(payload: Quiz2Payload):
         )
 
     except Exception as e:
+        logger.error(f"Quiz 2 generation failed: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail="Report generation failed. Please try again.")
 
 

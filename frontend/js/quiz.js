@@ -205,6 +205,7 @@ class ClarityQuiz {
   async _submit() {
     /* show loader */
     this._showLoader();
+    console.log('[Quiz] Submitting answers...', { quizType: this.quizType, answers: this.answers });
 
     try {
       let result;
@@ -215,14 +216,17 @@ class ClarityQuiz {
       };
 
       if (this.quizType === 'quiz1') {
+        console.log('[Quiz] Calling submitQuiz1...');
         result = await submitQuiz1(payload);
       } else {
+        console.log('[Quiz] Calling submitQuiz2...');
         result = await submitQuiz2({
           ...payload,
           partner_name: this.userData.partner_name,
         });
       }
 
+      console.log('[Quiz] Submission successful:', result);
       /* store report id locally so payment page can use it */
       localStorage.setItem('cb_report_id', result.report_id);
       localStorage.setItem('cb_archetype', result.archetype || '');
@@ -230,11 +234,15 @@ class ClarityQuiz {
       localStorage.setItem('cb_quiz_type', this.quizType);
 
       if (this.onComplete) {
+        console.log('[Quiz] Calling onComplete callback');
         this.onComplete(result.report_id);
       } else {
-        window.location.href = `report?id=${result.report_id}`;
+        const redirectUrl = `report.html?id=${result.report_id}`;
+        console.log('[Quiz] Redirecting to:', redirectUrl);
+        window.location.href = redirectUrl;
       }
     } catch (err) {
+      console.error('[Quiz] Submission failed:', err);
       this._hideLoader();
       this._showError(err.message || 'Something went wrong. Please try again.');
     }
