@@ -695,9 +695,21 @@ window.shareWhatsApp = function() {
 };
 
 window.copyLink = function() {
-  navigator.clipboard.writeText(`${window.location.origin}/quiz.html`).then(() => {
+  /* Fallback method: copy to clipboard without permission prompt */
+  const textarea = document.createElement('textarea');
+  textarea.value = `${window.location.origin}/quiz.html`;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
     showToast('Link copied!', 'success');
-  });
+  } catch (err) {
+    showError('Could not copy link. Please try again.');
+  } finally {
+    document.body.removeChild(textarea);
+  }
 };
 
 function showError(msg) {
