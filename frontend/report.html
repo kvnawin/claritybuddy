@@ -628,8 +628,9 @@ async function loadFullReport(reportId) {
   document.getElementById('page-loader').style.display = 'none';
   document.getElementById('report-content').style.display = 'block';
 
+  const maxScore = data.quiz_type === 'quiz2' ? 60 : 100;
   setTimeout(() => {
-    document.getElementById('score-fill').style.width = data.score + '%';
+    document.getElementById('score-fill').style.width = (data.score / maxScore * 100) + '%';
   }, 300);
 }
 

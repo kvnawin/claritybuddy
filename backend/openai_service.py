@@ -247,7 +247,7 @@ def _parse_quiz2_report(raw: str) -> Dict[str, Any]:
 
     _flush(sections, current, buffer)
 
-    score      = _extract_score(sections.get("score", ""))
+    score      = _extract_score(sections.get("score", ""), max_score=60)
     prompts    = _extract_prompts(sections.get("journal_prompts", ""))
     dimensions = _extract_dimensions(sections.get("dimensions_raw", ""))
 
@@ -323,13 +323,20 @@ def _extract_archetype(text: str) -> str:
             return a
     return "The Clarity Seeker"  # safe default
 
-def _extract_score(text: str) -> int:
+def _extract_score(text: str, max_score: int = 100) -> int:
+    # Prefer "X/max_score" pattern — prevents grabbing the denominator first
+    match = re.search(rf'(\d{{1,3}})\s*/{max_score}\b', text)
+    if match:
+        val = int(match.group(1))
+        if 1 <= val <= max_score:
+            return val
+    # Fallback: first 2-3 digit number within range
     nums = re.findall(r'\b(\d{2,3})\b', text)
     for n in nums:
         val = int(n)
-        if 1 <= val <= 100:
+        if 1 <= val <= max_score:
             return val
-    return 60  # safe default
+    return max_score // 2  # neutral default, not the maximum
 
 def _extract_prompts(text: str) -> List[str]:
     lines = [l.strip().lstrip("•-0123456789. ") for l in text.splitlines() if l.strip()]
