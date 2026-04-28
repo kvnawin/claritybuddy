@@ -171,12 +171,23 @@
   };
 
   window.copyLink = function() {
-    navigator.clipboard.writeText(`${window.location.origin}/quiz.html`).then(() => {
-      const t = document.getElementById('cb-toast');
-      t.textContent = 'Link copied!';
-      t.className = 'toast toast--success show';
-      setTimeout(() => t.classList.remove('show'), 3000);
-    });
+    // navigator.clipboard.writeText(`${window.location.origin}/quiz.html`).then(() => {
+    //   const t = document.getElementById('cb-toast');
+    //   t.textContent = 'Link copied!';
+    //   t.className = 'toast toast--success show';
+    //   setTimeout(() => t.classList.remove('show'), 3000);
+    // });
+    
+    // With this (no permission prompt):
+    window.copyLink = function() {
+      const el = document.createElement('textarea');
+      el.value = `${window.location.origin}/quiz.html`;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
+      showToast('Link copied!', 'success');
+    };
   };
 </script>
 

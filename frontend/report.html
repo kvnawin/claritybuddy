@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Clarity Report — ClarityBuddy</title>
-  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="css/main.css">
   <style>
 
     body { background: var(--cream); padding-top: 64px; }
@@ -515,10 +515,14 @@
 
 <script type="module">
 window.CB_API_URL = 'https://claritybuddy-api.railway.app';
-// window.CB_API_URL = 'http://localhost:8000';  // local dev
 
 import { getReportPreview, getFullReport } from './js/api.js';
-import { openCheckout, PLANS } from './js/payment.js';
+
+/* payment.js is loaded ONLY when user clicks unlock — avoids browser permission prompt */
+async function openCheckout(reportId, plan, userInfo) {
+  const { openCheckout: _open } = await import('./js/payment.js');
+  return _open(reportId, plan, userInfo);
+}
 
 /* ── Archetype metadata ── */
 const ARCHETYPES = {
