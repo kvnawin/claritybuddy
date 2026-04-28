@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Self Reflection Quiz — ClarityBuddy</title>
+  <meta name="description" content="Take the 20-question Self Reflection Assessment and discover your relationship clarity archetype.">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body { background: var(--cream); }
+
+    /* ── Quiz Shell ── */
+    .quiz-shell {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Quiz Header ── */
+    .quiz-header {
+      padding: 16px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    @media (min-width: 640px) { .quiz-header { padding: 20px 40px 0; } }
+
+    .quiz-logo {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .quiz-logo em { font-style: italic; color: var(--terra); }
+
+    .quiz-progress-wrap {
+      flex: 1;
+      max-width: 280px;
+    }
+    .quiz-progress-label {
+      font-size: 10px;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+      text-align: right;
+      margin-bottom: 4px;
+    }
+
+    /* ── Section Label ── */
+    .quiz-section-strip {
+      padding: 10px 20px;
+      background: var(--warm);
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--terra);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-section-strip::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: var(--terra);
+    }
+    @media (min-width: 640px) { .quiz-section-strip { padding: 10px 40px; } }
+
+    /* ── Quiz Body ── */
+    .quiz-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 20px 24px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .quiz-body { padding: 40px 40px 32px; } }
+
+    /* Question text */
+    .quiz-question {
+      font-family: var(--font-serif);
+      font-size: clamp(20px, 5vw, 28px);
+      font-weight: 400;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    /* Options grid */
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    /* ── Nav Buttons ── */
+    .quiz-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+    #btn-back {
+      flex: 0 0 auto;
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--ink-soft);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    #btn-back:hover { border-color: var(--ink); color: var(--ink); }
+    #btn-next {
+      flex: 1;
+    }
+
+    /* ── Loader ── */
+    #quiz-loader {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .loader-ring {
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--border);
+      border-top-color: var(--terra);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loader-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .loader-sub {
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-style: italic;
+      max-width: 280px;
+      line-height: 1.7;
+    }
+    .loader-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .loader-step {
+      font-size: 12px;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .loader-step-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .loader-step.active .loader-step-dot { background: var(--terra); }
+    .loader-step.active { color: var(--ink); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="quiz-shell">
+
+  <!-- Header -->
+  <header class="quiz-header">
+    <a href="index.html" class="quiz-logo">Clarity<em>Buddy</em></a>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label" id="progress-text">1 of 21</div>
+      <div class="progress-bar">
+        <div class="progress-bar__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section label strip -->
+  <div class="quiz-section-strip">
+    <span id="section-label">Self Reflection Assessment</span>
+  </div>
+
+  <!-- Quiz body -->
+  <main id="quiz-body" class="quiz-body">
+    <div id="question-wrap"></div>
+    <div class="quiz-nav">
+      <button id="btn-back" class="hidden">← Back</button>
+      <button id="btn-next" class="btn btn--primary">Continue →</button>
+    </div>
+  </main>
+
+  <!-- Loader (shown while GPT generates) -->
+  <div id="quiz-loader" class="hidden">
+    <div class="loader-ring"></div>
+    <div>
+      <p class="loader-title">Building your report…</p>
+      <p class="loader-sub">Our AI is reading your answers through the Relationship Clarity Framework.</p>
+    </div>
+    <div class="loader-steps">
+      <div class="loader-step active" id="ls-1">
+        <div class="loader-step-dot"></div>
+        <span>Identifying your clarity archetype</span>
+      </div>
+      <div class="loader-step" id="ls-2">
+        <div class="loader-step-dot"></div>
+        <span>Mapping your relationship patterns</span>
+      </div>
+      <div class="loader-step" id="ls-3">
+        <div class="loader-step-dot"></div>
+        <span>Writing your personalised report</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /quiz-shell -->
+
+<script type="module">
+/* ══════════════════════════════════════════════════
+   QUIZ 1 — All 20 Questions + Email capture
+   Email capture is inserted before last section (Q16)
+══════════════════════════════════════════════════ */
+
+/* Backend URL — change before deploying */
+window.CB_API_URL = 'https://claritybuddy-api.railway.app';
+
+import ClarityQuiz from './js/quiz.js';
+
+const QUESTIONS = [
+
+  /* ── Section A: Identity & Values ── */
+  {
+    id: 'q1', section: 'Section A — Identity & Values',
+    type: 'choice',
+    text: 'When you think about your non-negotiables in a relationship, you feel:',
+    options: [
+      { value: 'a', label: 'Confident — I know exactly what I need' },
+      { value: 'b', label: 'Somewhat clear — I have a general idea' },
+      { value: 'c', label: 'Confused — I keep changing my mind' },
+      { value: 'd', label: 'Pressured — I focus more on what others expect' },
+    ],
+  },
+  {
+    id: 'q2', section: 'Section A — Identity & Values',
+    type: 'choice',
+    text: 'Which best describes how you define yourself outside of relationships?',
+    options: [
+      { value: 'a', label: 'I have a strong independent identity' },
+      { value: 'b', label: 'I\'m still figuring out who I am' },
+      { value: 'c', label: 'I tend to define myself through others' },
+      { value: 'd', label: 'I know who I am but don\'t fully trust it' },
+    ],
+  },
+  {
+    id: 'q3', section: 'Section A — Identity & Values',
+    type: 'choice',
+    text: 'When someone violates your values — dishonesty, disrespect — you typically:',
+    options: [
+      { value: 'a', label: 'Walk away immediately' },
+      { value: 'b', label: 'Give them another chance hoping they\'ll change' },
+      { value: 'c', label: 'Stay but feel resentful inside' },
+      { value: 'd', label: 'Question whether my standards are too high' },
+    ],
+  },
+  {
+    id: 'q4', section: 'Section A — Identity & Values',
+    type: 'choice',
+    text: 'Your core values in a relationship are primarily around:',
+    options: [
+      { value: 'a', label: 'Emotional safety, honesty, respect' },
+      { value: 'b', label: 'Stability, ambition, shared goals' },
+      { value: 'c', label: 'Freedom, independence, personal space' },
+      { value: 'd', label: 'Family, loyalty, traditional structure' },
+    ],
+  },
+  {
+    id: 'q5', section: 'Section A — Identity & Values',
+    type: 'choice',
+    text: 'When you think about your non-negotiables, you:',
+    options: [
+      { value: 'a', label: 'Have a clear written or mental list' },
+      { value: 'b', label: 'Have a vague idea but haven\'t defined them' },
+      { value: 'c', label: 'Struggle to separate standards from fear' },
+      { value: 'd', label: 'Tend to compromise everything under pressure' },
+    ],
+  },
+
+  /* ── Section B: Emotional Readiness ── */
+  {
+    id: 'q6', section: 'Section B — Emotional Readiness',
+    type: 'choice',
+    text: 'When a good, emotionally stable man shows genuine interest, you feel:',
+    options: [
+      { value: 'a', label: 'Excited and open' },
+      { value: 'b', label: 'Slightly anxious but interested' },
+      { value: 'c', label: 'Suspicious or doubtful of his intentions' },
+      { value: 'd', label: 'Numb or avoidant' },
+    ],
+  },
+  {
+    id: 'q7', section: 'Section B — Emotional Readiness',
+    type: 'choice',
+    text: 'How much of your past hurt still affects your present decisions?',
+    options: [
+      { value: 'a', label: 'Very little — I\'ve processed and healed' },
+      { value: 'b', label: 'Some — certain triggers still catch me' },
+      { value: 'c', label: 'Quite a lot — I compare everyone to past experiences' },
+      { value: 'd', label: 'Completely — I haven\'t really dealt with it' },
+    ],
+  },
+  {
+    id: 'q8', section: 'Section B — Emotional Readiness',
+    type: 'choice',
+    text: 'When you think about being in a relationship right now, it feels:',
+    options: [
+      { value: 'a', label: 'Like something I genuinely want and am ready for' },
+      { value: 'b', label: 'Appealing but scary' },
+      { value: 'c', label: 'Overwhelming or too complicated right now' },
+      { value: 'd', label: 'Like something I\'m doing to escape loneliness' },
+    ],
+  },
+  {
+    id: 'q9', section: 'Section B — Emotional Readiness',
+    type: 'choice',
+    text: 'Do you trust your own judgement when evaluating a partner?',
+    options: [
+      { value: 'a', label: 'Yes, fully' },
+      { value: 'b', label: 'Mostly, with some doubt' },
+      { value: 'c', label: 'Not really — I second-guess everything' },
+      { value: 'd', label: 'No — I\'ve made too many mistakes before' },
+    ],
+  },
+  {
+    id: 'q10', section: 'Section B — Emotional Readiness',
+    type: 'choice',
+    text: 'When family or society pressure you about marriage timelines, you:',
+    options: [
+      { value: 'a', label: 'Stay grounded in my own pace' },
+      { value: 'b', label: 'Feel conflicted but manage it' },
+      { value: 'c', label: 'Let it significantly influence my decisions' },
+      { value: 'd', label: 'Make relationship choices primarily because of it' },
+    ],
+  },
+
+  /* ── Section C: Love Patterns ── */
+  {
+    id: 'q11', section: 'Section C — Love Patterns',
+    type: 'choice',
+    text: 'Looking at past attractions, the men you\'ve been drawn to were usually:',
+    options: [
+      { value: 'a', label: 'Emotionally mature and consistent' },
+      { value: 'b', label: 'Charming but inconsistent' },
+      { value: 'c', label: 'Emotionally unavailable or closed off' },
+      { value: 'd', label: 'Caring but overly dependent' },
+    ],
+  },
+  {
+    id: 'q12', section: 'Section C — Love Patterns',
+    type: 'choice',
+    text: 'In past relationships or crushes, how did you usually feel emotionally?',
+    options: [
+      { value: 'a', label: 'Calm, valued, and understood' },
+      { value: 'b', label: 'Anxious and constantly seeking reassurance' },
+      { value: 'c', label: 'Confused about where I stood' },
+      { value: 'd', label: 'Like I was working harder than them' },
+    ],
+  },
+  {
+    id: 'q13', section: 'Section C — Love Patterns',
+    type: 'choice',
+    text: 'When a relationship was clearly wrong for you, you typically:',
+    options: [
+      { value: 'a', label: 'Walked away relatively quickly' },
+      { value: 'b', label: 'Stayed hoping things would improve' },
+      { value: 'c', label: 'Stayed because of fear of being alone' },
+      { value: 'd', label: 'Stayed because of outside pressure' },
+    ],
+  },
+  {
+    id: 'q14', section: 'Section C — Love Patterns',
+    type: 'choice',
+    text: 'The role you usually take in relationships is:',
+    options: [
+      { value: 'a', label: 'Equal partner — mutual effort' },
+      { value: 'b', label: 'The healer or fixer' },
+      { value: 'c', label: 'The one who adjusts and accommodates' },
+      { value: 'd', label: 'The chaser — always initiating' },
+    ],
+  },
+  {
+    id: 'q15', section: 'Section C — Love Patterns',
+    type: 'choice',
+    text: 'Which fear feels most familiar to you?',
+    options: [
+      { value: 'a', label: 'Fear of losing my independence' },
+      { value: 'b', label: 'Fear of choosing wrong and regretting it' },
+      { value: 'c', label: 'Fear of being alone or "too late"' },
+      { value: 'd', label: 'Fear of repeating past mistakes' },
+    ],
+  },
+
+  /* ── Email Capture (before Section D) ── */
+  {
+    id: 'email', section: 'Almost There',
+    type: 'email',
+    text: 'Where should we send your clarity report?',
+    subtitle: 'You\'ve answered 15 questions. Your personalised report will be ready in under a minute — enter your details to receive it.',
+  },
+
+  /* ── Section D: Relationship Structure ── */
+  {
+    id: 'q16', section: 'Section D — Relationship Structure',
+    type: 'choice',
+    text: 'Your ideal communication style in a relationship is:',
+    options: [
+      { value: 'a', label: 'Daily meaningful check-ins' },
+      { value: 'b', label: 'Regular contact but with personal space' },
+      { value: 'c', label: 'Mostly independent with periodic deep conversations' },
+      { value: 'd', label: 'Spontaneous — no fixed structure' },
+    ],
+  },
+  {
+    id: 'q17', section: 'Section D — Relationship Structure',
+    type: 'choice',
+    text: 'Your lifestyle is best described as:',
+    options: [
+      { value: 'a', label: 'Structured, planned, routine-oriented' },
+      { value: 'b', label: 'Balanced — mix of routine and flexibility' },
+      { value: 'c', label: 'Spontaneous and social' },
+      { value: 'd', label: 'Calm, introverted, homebody' },
+    ],
+  },
+  {
+    id: 'q18', section: 'Section D — Relationship Structure',
+    type: 'choice',
+    text: 'When it comes to emotional closeness, you prefer:',
+    options: [
+      { value: 'a', label: 'Deep intimacy — sharing everything' },
+      { value: 'b', label: 'Warm connection with healthy personal space' },
+      { value: 'c', label: 'Gradual closeness — slow to open up' },
+      { value: 'd', label: 'Independent connection — space is very important' },
+    ],
+  },
+  {
+    id: 'q19', section: 'Section D — Relationship Structure',
+    type: 'choice',
+    text: 'For your long-term future, which matters most to you?',
+    options: [
+      { value: 'a', label: 'Emotional peace and stability' },
+      { value: 'b', label: 'Growth and ambition together' },
+      { value: 'c', label: 'Family orientation and rootedness' },
+      { value: 'd', label: 'Freedom and personal fulfilment within a relationship' },
+    ],
+  },
+  {
+    id: 'q20', section: 'Section D — Relationship Structure',
+    type: 'choice',
+    text: 'When you imagine your ideal relationship in 5 years, it feels:',
+    options: [
+      { value: 'a', label: 'Clear — I know exactly what I want' },
+      { value: 'b', label: 'Somewhat formed — still defining the details' },
+      { value: 'c', label: 'Vague — I avoid thinking too far ahead' },
+      { value: 'd', label: 'Pressured — I focus on timeline more than vision' },
+    ],
+  },
+];
+
+/* Boot the quiz */
+new ClarityQuiz({
+  quizType:  'quiz1',
+  questions: QUESTIONS,
+  onComplete: (reportId) => {
+    /* animate loader steps */
+    let step = 1;
+    const stepInterval = setInterval(() => {
+      step++;
+      const el = document.getElementById(`ls-${step}`);
+      if (el) el.classList.add('active');
+      if (step >= 3) clearInterval(stepInterval);
+    }, 2000);
+  },
+});
+</script>
+
+</body>
+</html>

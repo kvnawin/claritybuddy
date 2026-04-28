@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Clarity Report — ClarityBuddy</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+
+    body { background: var(--cream); padding-top: 64px; }
+
+    /* ── Nav (minimal on report page) ── */
+    .nav { position: fixed; }
+
+    /* ── Report hero ── */
+    .report-hero {
+      padding: 48px 20px 36px;
+      background: var(--warm);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    @media (min-width: 640px) { .report-hero { padding: 56px 40px 44px; } }
+
+    .report-hero__label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .report-hero__label::before,
+    .report-hero__label::after {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--terra);
+    }
+
+    .report-hero__archetype {
+      font-family: var(--font-serif);
+      font-size: clamp(32px, 8vw, 52px);
+      font-weight: 400;
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 24px;
+    }
+
+    .report-hero__score-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      max-width: 320px;
+      margin: 0 auto 16px;
+    }
+    .report-hero__score-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      flex-shrink: 0;
+    }
+    .report-hero__score-bar {
+      flex: 1;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .report-hero__score-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.4s ease;
+    }
+    .report-hero__score-num {
+      font-family: var(--font-serif);
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--terra);
+      flex-shrink: 0;
+    }
+    .report-hero__tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 16px;
+    }
+
+    /* ── Report body ── */
+    .report-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    @media (min-width: 640px) { .report-body { padding: 0 40px 80px; } }
+
+    /* ── Free preview sections ── */
+    .preview-section {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .preview-section__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px;
+    }
+    .preview-section__title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .preview-section__body {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink-mid);
+    }
+
+    /* ── Paywall ── */
+    .paywall {
+      position: relative;
+      margin-top: 8px;
+    }
+    .paywall__blur-content {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      padding: 20px 0;
+    }
+    .paywall__blur-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink-mid);
+    }
+    .paywall__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(250,247,242,0.7) 25%,
+        var(--cream) 55%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 20px;
+      z-index: 2;
+    }
+
+    /* ── Unlock card ── */
+    .unlock-card {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin: 32px 0;
+    }
+    .unlock-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+    }
+    .unlock-card__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .unlock-card__title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: var(--cream);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .unlock-card__desc {
+      font-size: 13px;
+      color: rgba(250,247,242,0.6);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .unlock-card__what {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      margin-bottom: 24px;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .unlock-card__item {
+      font-size: 12px;
+      color: rgba(250,247,242,0.7);
+      display: flex;
+      gap: 10px;
+    }
+    .unlock-card__item::before {
+      content: '✓';
+      color: var(--sage);
+      flex-shrink: 0;
+    }
+    .unlock-card__price {
+      font-family: var(--font-serif);
+      font-size: 44px;
+      color: var(--cream);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .unlock-card__price sup {
+      font-size: 20px;
+      font-family: var(--font-sans);
+      font-weight: 300;
+      vertical-align: top;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    .unlock-card__price-note {
+      font-size: 11px;
+      color: rgba(250,247,242,0.4);
+      margin-bottom: 20px;
+    }
+
+    /* Plan switcher */
+    .plan-tabs {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .plan-tab {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 8px 16px;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(250,247,242,0.6);
+      cursor: pointer;
+      background: none;
+      transition: all var(--transition);
+    }
+    .plan-tab.active {
+      border-color: var(--terra);
+      color: var(--cream);
+      background: rgba(192,100,74,0.2);
+    }
+
+    /* ── Full report (revealed after payment) ── */
+    .full-report { display: none; }
+    .full-report.revealed { display: block; }
+
+    .report-section-full {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .report-section-full:last-child { border-bottom: none; }
+    .report-section-full__label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px;
+    }
+    .report-section-full__title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .report-section-full__body {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--ink-mid);
+    }
+    .report-section-full__body p + p { margin-top: 12px; }
+
+    /* Journal prompts */
+    .journal-prompts {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .journal-prompt {
+      background: var(--warm);
+      border-left: 3px solid var(--terra);
+      padding: 14px 18px;
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Upsell (subscription) after report ── */
+    .upsell-banner {
+      background: linear-gradient(150deg, var(--terra) 0%, var(--terra-d) 100%);
+      padding: 40px 24px;
+      text-align: center;
+      margin-top: 48px;
+    }
+    .upsell-banner__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold-pale);
+      margin-bottom: 12px;
+    }
+    .upsell-banner__title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: var(--cream);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .upsell-banner__desc {
+      font-size: 13px;
+      color: rgba(250,247,242,0.7);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── Share ── */
+    .share-section {
+      padding: 32px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .share-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .share-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 20px; }
+    .share-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="index.html" class="nav__logo">Clarity<em>Buddy</em></a>
+</nav>
+
+<!-- Loading state (shown while fetching report) -->
+<div id="page-loader" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;text-align:center;padding:40px 20px;">
+  <div style="width:48px;height:48px;border:2px solid var(--border);border-top-color:var(--terra);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <p style="font-family:var(--font-serif);font-size:20px;color:var(--ink);">Loading your report…</p>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+
+<!-- Report (hidden until loaded) -->
+<div id="report-content" style="display:none;">
+
+  <!-- Hero: archetype + score (always shown free) -->
+  <section class="report-hero">
+    <div class="report-hero__label">Your Clarity Report</div>
+    <h1 class="report-hero__archetype" id="archetype-name">The Clarity Seeker</h1>
+    <div class="report-hero__score-wrap">
+      <span class="report-hero__score-label">Score</span>
+      <div class="report-hero__score-bar">
+        <div class="report-hero__score-fill" id="score-fill"></div>
+      </div>
+      <span class="report-hero__score-num" id="score-num">—</span>
+    </div>
+    <div class="report-hero__tags" id="archetype-tags">
+      <!-- injected by JS -->
+    </div>
+  </section>
+
+  <!-- Report body -->
+  <div class="report-body">
+
+    <!-- FREE: Archetype description (short teaser) -->
+    <div class="preview-section animate-fadeup delay-1">
+      <div class="preview-section__eyebrow">Your Archetype</div>
+      <h2 class="preview-section__title" id="archetype-title"></h2>
+      <div class="preview-section__body" id="archetype-teaser"></div>
+    </div>
+
+    <!-- PAYWALL SECTION — shown when not paid -->
+    <div id="paywall-section">
+
+      <!-- Blurred preview of full report -->
+      <div class="paywall animate-fadeup delay-2">
+        <div class="paywall__blur-content">
+          <div class="paywall__blur-text">
+            <p><strong>Your Strengths</strong></p>
+            <p>Your analytical mind is one of your greatest assets. You approach relationships with a level of intentionality that most women never develop. You don't fall for flattery — you observe patterns, you notice inconsistencies, and you protect yourself from impulsive decisions that you'd regret later. This is not something everyone has.</p>
+            <br>
+            <p><strong>Your Blind Spots</strong></p>
+            <p>The same gift that protects you is also the thing that slows you down. You have developed a pattern of waiting for certainty before you allow yourself to feel. But certainty is not something love offers upfront — it is something that reveals itself through experience, not analysis. The question to sit with is: how many moments of genuine connection have you talked yourself out of because the data wasn't complete yet?</p>
+          </div>
+        </div>
+        <div class="paywall__overlay">
+          <p style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">Your full report is ready</p>
+          <button class="btn btn--primary btn--full" onclick="scrollToUnlock()">Unlock Full Report ₹299 →</button>
+        </div>
+      </div>
+
+      <!-- Unlock card -->
+      <div class="unlock-card animate-fadeup delay-3" id="unlock-card">
+        <div class="unlock-card__eyebrow">Unlock Your Full Report</div>
+        <h2 class="unlock-card__title">Your report tells you<br><em style="color:var(--gold)">what</em> the pattern is.<br>Now understand <em style="color:var(--gold)">why.</em></h2>
+        <p class="unlock-card__desc">Your personalised report is ready — written specifically from your 20 answers, not a template.</p>
+
+        <div class="unlock-card__what">
+          <div class="unlock-card__item">Your strengths — specifically yours</div>
+          <div class="unlock-card__item">Your blind spots — named clearly</div>
+          <div class="unlock-card__item">3 personalised journal prompts</div>
+          <div class="unlock-card__item">Your clear next step</div>
+          <div class="unlock-card__item">Compatibility Check access</div>
+        </div>
+
+        <!-- Plan tabs -->
+        <div class="plan-tabs">
+          <button class="plan-tab active" data-plan="single" onclick="selectPlan(this,'single')">Single ₹299</button>
+          <button class="plan-tab" data-plan="combo" onclick="selectPlan(this,'combo')">Combo ₹499</button>
+          <button class="plan-tab" data-plan="monthly" onclick="selectPlan(this,'monthly')">Monthly ₹399</button>
+        </div>
+
+        <div class="unlock-card__price"><sup>₹</sup><span id="plan-price">299</span></div>
+        <p class="unlock-card__price-note" id="plan-note">One-time · Full report for this quiz</p>
+
+        <button id="btn-unlock" class="btn btn--cream btn--full btn--lg" onclick="handleUnlock()">
+          Unlock My Report →
+        </button>
+
+        <p style="font-size:11px;color:rgba(250,247,242,0.35);margin-top:14px;">
+          Secure payment via Razorpay · UPI, Cards, NetBanking accepted
+        </p>
+      </div>
+
+    </div><!-- /paywall-section -->
+
+    <!-- FULL REPORT (revealed after payment) -->
+    <div id="full-report" class="full-report">
+
+      <div class="report-section-full animate-fadeup">
+        <div class="report-section-full__label">Your Strengths</div>
+        <h3 class="report-section-full__title">What you already do well</h3>
+        <div class="report-section-full__body" id="section-strengths"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-1">
+        <div class="report-section-full__label">Your Blind Spots</div>
+        <h3 class="report-section-full__title">What to watch for</h3>
+        <div class="report-section-full__body" id="section-blindspots"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-2">
+        <div class="report-section-full__label">Journal Prompts</div>
+        <h3 class="report-section-full__title">Questions to sit with</h3>
+        <div class="journal-prompts" id="section-prompts"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-3">
+        <div class="report-section-full__label">Your Next Step</div>
+        <h3 class="report-section-full__title">Where to go from here</h3>
+        <div class="report-section-full__body" id="section-nextstep"></div>
+      </div>
+
+      <!-- Subscription upsell -->
+      <div class="upsell-banner animate-fadeup">
+        <div class="upsell-banner__eyebrow">Your Journey Continues</div>
+        <h2 class="upsell-banner__title">Your report told you <em style="color:var(--gold-pale)">what</em> you are.<br>The subscription helps you <em style="color:var(--gold-pale)">become</em> who you want to be.</h2>
+        <p class="upsell-banner__desc">The AI Clarity Coach knows your archetype, your patterns, your fears. It responds to your actual situations — not generic advice.</p>
+        <a href="index.html#pricing" class="btn btn--cream btn--lg">Start Your 30-Day Clarity Journey →</a>
+        <p style="font-size:11px;color:rgba(250,247,242,0.4);margin-top:12px;">₹399/month · Cancel anytime</p>
+      </div>
+
+      <!-- Share -->
+      <div class="share-section">
+        <h3 class="share-title">Share your archetype</h3>
+        <p class="share-sub">Quiz results are meant to be talked about.</p>
+        <div class="share-buttons">
+          <button class="btn btn--outline btn--sm" onclick="shareWhatsApp()">Share on WhatsApp</button>
+          <button class="btn btn--outline btn--sm" onclick="copyLink()">Copy Link</button>
+        </div>
+      </div>
+
+    </div><!-- /full-report -->
+
+  </div><!-- /report-body -->
+</div><!-- /report-content -->
+
+<div id="cb-toast" class="toast"></div>
+
+<script type="module">
+window.CB_API_URL = 'https://claritybuddy-api.railway.app';
+
+import { getReportPreview, getFullReport } from './js/api.js';
+import { openCheckout, PLANS } from './js/payment.js';
+
+/* ── Archetype metadata ── */
+const ARCHETYPES = {
+  'The Guarded Protector': {
+    teaser: 'You have built strong walls — and with good reason. Your self-awareness is exceptional, and you are nearly impossible to manipulate. But the same walls that keep the wrong people out are also keeping the right ones at a distance.',
+    tags: ['Self-Aware', 'Strong Boundaries', 'Fear of Vulnerability'],
+  },
+  'The Hopeful Healer': {
+    teaser: 'You love deeply and genuinely — your capacity for empathy is one of your most beautiful qualities. But right now, that love is being spent in places that cannot receive it. You are drawn to potential rather than reality.',
+    tags: ['Deeply Empathetic', 'Fixer Pattern', 'Over-giving'],
+  },
+  'The Clarity Seeker': {
+    teaser: 'Your mind is sharp and your values are clear. You approach love with the same analytical care you bring to everything else. The challenge is that some things can only be understood through experience — not analysis.',
+    tags: ['Analytical', 'High Standards', 'Analysis Paralysis'],
+  },
+  'The Pressure Pleaser': {
+    teaser: 'You are warm, considerate, and deeply family-oriented. But somewhere along the way, you started making relationship decisions based on everyone\'s timeline except your own. Your own desires are valid — and they matter.',
+    tags: ['Family-Oriented', 'People-Pleasing', 'External Pressure'],
+  },
+  'The Grounded Chooser': {
+    teaser: 'You are emotionally ready and values-aligned. You choose from a place of clarity rather than fear, loneliness, or pressure. This is where every woman\'s clarity journey is headed — and you\'re already here.',
+    tags: ['Emotionally Ready', 'Self-Knowing', 'Values-Aligned'],
+  },
+};
+
+let currentReportId = null;
+let currentPlan = 'single';
+
+/* ── Boot ── */
+async function init() {
+  const params    = new URLSearchParams(window.location.search);
+  const reportId  = params.get('id') || localStorage.getItem('cb_report_id');
+  const unlocked  = params.get('unlocked') === '1';
+
+  if (!reportId) {
+    window.location.href = 'quiz.html';
+    return;
+  }
+
+  currentReportId = reportId;
+
+  try {
+    if (unlocked) {
+      await loadFullReport(reportId);
+    } else {
+      await loadPreview(reportId);
+    }
+  } catch (err) {
+    showError('Could not load your report. Please try again.');
+    document.getElementById('page-loader').style.display = 'none';
+  }
+}
+
+async function loadPreview(reportId) {
+  const data = await getReportPreview(reportId);
+
+  if (data.paid) {
+    await loadFullReport(reportId);
+    return;
+  }
+
+  renderHero(data.archetype, data.score);
+  renderArchetypeTeaser(data.archetype);
+  document.getElementById('page-loader').style.display = 'none';
+  document.getElementById('report-content').style.display = 'block';
+
+  /* animate score bar */
+  setTimeout(() => {
+    document.getElementById('score-fill').style.width = data.score + '%';
+  }, 300);
+}
+
+async function loadFullReport(reportId) {
+  const data = await getFullReport(reportId);
+
+  renderHero(data.archetype, data.score);
+  renderArchetypeTeaser(data.archetype);
+
+  /* hide paywall, show full report */
+  document.getElementById('paywall-section').style.display = 'none';
+  document.getElementById('full-report').classList.add('revealed');
+
+  /* render sections */
+  renderSection('section-strengths', data.strengths);
+  renderSection('section-blindspots', data.blind_spots);
+  renderPrompts(data.journal_prompts);
+  renderSection('section-nextstep', data.next_step);
+
+  document.getElementById('page-loader').style.display = 'none';
+  document.getElementById('report-content').style.display = 'block';
+
+  setTimeout(() => {
+    document.getElementById('score-fill').style.width = data.score + '%';
+  }, 300);
+}
+
+function renderHero(archetype, score) {
+  document.getElementById('archetype-name').textContent  = archetype;
+  document.getElementById('score-num').textContent        = score;
+  document.title = `${archetype} — ClarityBuddy`;
+
+  const meta = ARCHETYPES[archetype] || {};
+  const tagsEl = document.getElementById('archetype-tags');
+  tagsEl.innerHTML = (meta.tags || [])
+    .map(t => `<span class="tag tag--terra">${t}</span>`)
+    .join('');
+}
+
+function renderArchetypeTeaser(archetype) {
+  const meta = ARCHETYPES[archetype] || {};
+  document.getElementById('archetype-title').textContent = archetype;
+  document.getElementById('archetype-teaser').innerHTML =
+    `<p>${meta.teaser || ''}</p>`;
+}
+
+function renderSection(id, content) {
+  if (!content) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  /* content is plain text with newlines — convert to paragraphs */
+  el.innerHTML = content
+    .split('\n')
+    .filter(l => l.trim())
+    .map(l => `<p>${l}</p>`)
+    .join('');
+}
+
+function renderPrompts(prompts) {
+  if (!prompts?.length) return;
+  const el = document.getElementById('section-prompts');
+  el.innerHTML = prompts
+    .map(p => `<div class="journal-prompt">${p}</div>`)
+    .join('');
+}
+
+/* ── Plan selection ── */
+const PRICE_DISPLAY = { single: '299', combo: '499', monthly: '399', annual: '2,999' };
+const PLAN_NOTES    = {
+  single:  'One-time · Full report for this quiz',
+  combo:   'One-time · Both Quiz 1 + Quiz 2 reports',
+  monthly: 'Per month · AI Coach + retake every 90 days',
+  annual:  'Per year · Full transformation journey',
+};
+
+window.selectPlan = function(btn, plan) {
+  document.querySelectorAll('.plan-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPlan = plan;
+  document.getElementById('plan-price').textContent = PRICE_DISPLAY[plan];
+  document.getElementById('plan-note').textContent  = PLAN_NOTES[plan];
+};
+
+window.scrollToUnlock = function() {
+  document.getElementById('unlock-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.handleUnlock = async function() {
+  const userInfo = {
+    name:  localStorage.getItem('cb_user_name')  || '',
+    email: localStorage.getItem('cb_user_email') || '',
+  };
+  await openCheckout(currentReportId, currentPlan, userInfo);
+};
+
+/* ── Share ── */
+window.shareWhatsApp = function() {
+  const archetype = document.getElementById('archetype-name').textContent;
+  const text = `I just discovered I'm "${archetype}" on ClarityBuddy — a relationship clarity quiz built on the Relationship Clarity Framework. Take it free: ${window.location.origin}/quiz.html`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+};
+
+window.copyLink = function() {
+  navigator.clipboard.writeText(`${window.location.origin}/quiz.html`).then(() => {
+    showToast('Link copied!', 'success');
+  });
+};
+
+function showError(msg) {
+  const t = document.getElementById('cb-toast');
+  t.textContent = msg;
+  t.className = 'toast toast--error show';
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('cb-toast');
+  t.textContent = msg;
+  t.className = `toast toast--${type} show`;
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+init();
+</script>
+
+</body>
+</html>

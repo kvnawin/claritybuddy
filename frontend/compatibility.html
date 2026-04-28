@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Compatibility Check — ClarityBuddy</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body { background: var(--cream); }
+    .quiz-shell { min-height: 100svh; display: flex; flex-direction: column; }
+    .quiz-header {
+      padding: 16px 20px 0;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    @media(min-width:640px){ .quiz-header{ padding: 20px 40px 0; } }
+    .quiz-logo { font-family: var(--font-serif); font-size: 18px; color: var(--ink); text-decoration: none; }
+    .quiz-logo em { font-style: italic; color: var(--terra); }
+    .quiz-progress-wrap { flex: 1; max-width: 280px; }
+    .quiz-progress-label { font-size: 10px; color: var(--ink-soft); letter-spacing: 0.06em; text-align: right; margin-bottom: 4px; }
+    .quiz-section-strip {
+      padding: 10px 20px;
+      background: var(--warm); border-bottom: 1px solid var(--border);
+      font-size: 10px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--terra); display: flex; align-items: center; gap: 8px;
+    }
+    .quiz-section-strip::before { content: ''; width: 16px; height: 1px; background: var(--terra); }
+    @media(min-width:640px){ .quiz-section-strip{ padding: 10px 40px; } }
+    .quiz-body {
+      flex: 1; display: flex; flex-direction: column;
+      padding: 32px 20px 24px; max-width: 640px; width: 100%; margin: 0 auto;
+    }
+    @media(min-width:640px){ .quiz-body{ padding: 40px 40px 32px; } }
+    .quiz-question { font-family: var(--font-serif); font-size: clamp(20px,5vw,28px); font-weight: 400; line-height: 1.25; color: var(--ink); margin-bottom: 28px; }
+    .quiz-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 32px; }
+    .quiz-nav { display: flex; gap: 12px; margin-top: auto; padding-top: 16px; }
+    #btn-back {
+      flex: 0 0 auto; background: transparent; border: 1px solid var(--border-mid);
+      color: var(--ink-soft); font-family: var(--font-sans); font-size: 12px;
+      font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 14px 20px; cursor: pointer; transition: all var(--transition);
+    }
+    #btn-back:hover { border-color: var(--ink); color: var(--ink); }
+    #btn-next { flex: 1; }
+    #quiz-loader {
+      flex: 1; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 24px; padding: 60px 20px; text-align: center;
+    }
+    .loader-ring { width: 52px; height: 52px; border: 2px solid var(--border); border-top-color: var(--terra); border-radius: 50%; animation: spin 0.8s linear infinite; }
+    .loader-title { font-family: var(--font-serif); font-size: 24px; color: var(--ink); margin-bottom: 8px; }
+    .loader-sub { font-size: 13px; color: var(--ink-soft); font-style: italic; max-width: 280px; line-height: 1.7; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Dimension badge */
+    .dimension-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 9px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--terra); margin-bottom: 8px;
+      border: 1px solid rgba(192,100,74,0.3); padding: 3px 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div class="quiz-shell">
+  <header class="quiz-header">
+    <a href="index.html" class="quiz-logo">Clarity<em>Buddy</em></a>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label" id="progress-text">1 of 16</div>
+      <div class="progress-bar">
+        <div class="progress-bar__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <div class="quiz-section-strip">
+    <span id="section-label">Compatibility Check</span>
+  </div>
+
+  <main id="quiz-body" class="quiz-body">
+    <div id="question-wrap"></div>
+    <div class="quiz-nav">
+      <button id="btn-back" class="hidden">← Back</button>
+      <button id="btn-next" class="btn btn--primary">Continue →</button>
+    </div>
+  </main>
+
+  <div id="quiz-loader" class="hidden">
+    <div class="loader-ring"></div>
+    <div>
+      <p class="loader-title">Calculating compatibility…</p>
+      <p class="loader-sub">Scoring 6 dimensions from your answers using the Compatibility Framework.</p>
+    </div>
+  </div>
+</div>
+
+<div id="cb-toast" class="toast"></div>
+
+<script type="module">
+window.CB_API_URL = 'https://claritybuddy-api.railway.app';
+
+import ClarityQuiz from './js/quiz.js';
+
+const QUESTIONS = [
+  /* ── Email capture first ── */
+  {
+    id: 'email', section: 'Compatibility Check',
+    type: 'email',
+    text: 'Who is this compatibility report for?',
+    subtitle: 'We\'ll personalise the report to your specific relationship. Your details are kept private.',
+  },
+
+  /* ── Dimension 1: Emotional Compatibility ── */
+  {
+    id: 'eq1', section: 'Emotional Compatibility',
+    type: 'choice',
+    text: 'When you\'re upset or stressed, how does he typically respond?',
+    options: [
+      { value: 'a', label: 'He notices and creates space for me to talk' },
+      { value: 'b', label: 'He tries to help but sometimes misses the point' },
+      { value: 'c', label: 'He gets uncomfortable and changes the subject' },
+      { value: 'd', label: 'He dismisses it or makes me feel dramatic' },
+    ],
+  },
+  {
+    id: 'eq2', section: 'Emotional Compatibility',
+    type: 'choice',
+    text: 'How emotionally available does he feel to you on a day-to-day basis?',
+    options: [
+      { value: 'a', label: 'Consistently present and engaged' },
+      { value: 'b', label: 'Available most of the time with some distance' },
+      { value: 'c', label: 'Unpredictable — sometimes warm, sometimes closed off' },
+      { value: 'd', label: 'Mostly unavailable or emotionally distant' },
+    ],
+  },
+
+  /* ── Dimension 2: Communication Compatibility ── */
+  {
+    id: 'cq1', section: 'Communication Compatibility',
+    type: 'choice',
+    text: 'When you disagree on something, what happens?',
+    options: [
+      { value: 'a', label: 'We talk it through and usually reach understanding' },
+      { value: 'b', label: 'It gets tense but we come back to it' },
+      { value: 'c', label: 'One of us goes silent and it gets dropped' },
+      { value: 'd', label: 'It escalates or I end up apologising to keep peace' },
+    ],
+  },
+  {
+    id: 'cq2', section: 'Communication Compatibility',
+    type: 'choice',
+    text: 'How comfortable do you feel expressing your real needs with him?',
+    options: [
+      { value: 'a', label: 'Very comfortable — he receives them well' },
+      { value: 'b', label: 'Comfortable with small things, careful with bigger ones' },
+      { value: 'c', label: 'I often edit myself before speaking' },
+      { value: 'd', label: 'I rarely share what I really need' },
+    ],
+  },
+
+  /* ── Dimension 3: Lifestyle Compatibility ── */
+  {
+    id: 'lq1', section: 'Lifestyle Compatibility',
+    type: 'choice',
+    text: 'How aligned are your day-to-day lifestyles?',
+    options: [
+      { value: 'a', label: 'Very aligned — energy levels, routines, social needs match' },
+      { value: 'b', label: 'Mostly aligned with manageable differences' },
+      { value: 'c', label: 'Different but we work around it' },
+      { value: 'd', label: 'Quite different — it creates regular friction' },
+    ],
+  },
+  {
+    id: 'lq2', section: 'Lifestyle Compatibility',
+    type: 'choice',
+    text: 'How do you feel about your individual space and independence in this relationship?',
+    options: [
+      { value: 'a', label: 'I feel respected and have the space I need' },
+      { value: 'b', label: 'Mostly okay with occasional over-dependency' },
+      { value: 'c', label: 'I sometimes feel smothered or restricted' },
+      { value: 'd', label: 'I feel like I have too much distance / he\'s disengaged' },
+    ],
+  },
+
+  /* ── Dimension 4: Values Compatibility ── */
+  {
+    id: 'vq1', section: 'Values Compatibility',
+    type: 'choice',
+    text: 'When it comes to honesty and integrity, how does he show up?',
+    options: [
+      { value: 'a', label: 'Consistently honest, even when it\'s uncomfortable' },
+      { value: 'b', label: 'Honest in most areas, avoids a few topics' },
+      { value: 'c', label: 'I sometimes get incomplete or inconsistent stories' },
+      { value: 'd', label: 'I\'ve caught him being dishonest more than once' },
+    ],
+  },
+  {
+    id: 'vq2', section: 'Values Compatibility',
+    type: 'choice',
+    text: 'How similar are your core values around family, commitment, and what a relationship should feel like?',
+    options: [
+      { value: 'a', label: 'Very similar — we\'ve talked about it and it aligns' },
+      { value: 'b', label: 'Broadly similar with some differences' },
+      { value: 'c', label: 'Quite different but I hope it works out' },
+      { value: 'd', label: 'We haven\'t discussed it and I\'m worried we\'d clash' },
+    ],
+  },
+
+  /* ── Dimension 5: Growth & Ambition ── */
+  {
+    id: 'gq1', section: 'Growth & Ambition Compatibility',
+    type: 'choice',
+    text: 'Does he support your personal goals and ambitions?',
+    options: [
+      { value: 'a', label: 'Genuinely — he encourages me and celebrates my growth' },
+      { value: 'b', label: 'Generally yes, occasionally needs reminding' },
+      { value: 'c', label: 'He\'s neutral — not interested in my goals' },
+      { value: 'd', label: 'He feels threatened or dismisses my ambitions' },
+    ],
+  },
+  {
+    id: 'gq2', section: 'Growth & Ambition Compatibility',
+    type: 'choice',
+    text: 'How do you feel about his direction in life — career, purpose, growth?',
+    options: [
+      { value: 'a', label: 'Inspired — he\'s driven and directional' },
+      { value: 'b', label: 'Content — stable and settled, which works for me' },
+      { value: 'c', label: 'Concerned — I sense a lack of direction' },
+      { value: 'd', label: 'Frustrated — it\'s a real point of tension' },
+    ],
+  },
+
+  /* ── Dimension 6: Future Vision ── */
+  {
+    id: 'fq1', section: 'Future Vision Compatibility',
+    type: 'choice',
+    text: 'Have you had honest conversations about the future — marriage, family, where you\'d live?',
+    options: [
+      { value: 'a', label: 'Yes, and our visions align' },
+      { value: 'b', label: 'We\'ve touched on it — broadly compatible' },
+      { value: 'c', label: 'Not really — I avoid it in case it\'s uncomfortable' },
+      { value: 'd', label: 'We have different visions and haven\'t resolved it' },
+    ],
+  },
+  {
+    id: 'fq2', section: 'Future Vision Compatibility',
+    type: 'choice',
+    text: 'When you imagine your life in 5 years with him, it feels:',
+    options: [
+      { value: 'a', label: 'Exciting and genuinely wanted' },
+      { value: 'b', label: 'Good — stable and comfortable' },
+      { value: 'c', label: 'Uncertain — I\'m not sure how I feel' },
+      { value: 'd', label: 'Scary or wrong in a way I can\'t ignore' },
+    ],
+  },
+
+  /* ── Overall feeling question ── */
+  {
+    id: 'overall', section: 'Overall',
+    type: 'choice',
+    text: 'Overall, how do you most often feel in this relationship?',
+    options: [
+      { value: 'a', label: 'Safe, seen, and valued' },
+      { value: 'b', label: 'Generally good with ups and downs' },
+      { value: 'c', label: 'Anxious or uncertain more often than not' },
+      { value: 'd', label: 'Like I\'m working too hard for too little' },
+    ],
+  },
+];
+
+new ClarityQuiz({
+  quizType:  'quiz2',
+  questions: QUESTIONS,
+});
+</script>
+
+</body>
+</html>
