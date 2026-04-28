@@ -26,8 +26,9 @@ async function _request(method, path, body = null, timeoutMs = 60000) {
     console.log(`[API] Response: ${res.status}`, data);
 
     if (!res.ok) {
-      const msg = data.detail || data.message || 'Something went wrong. Please try again.';
-      console.error(`[API] Error ${res.status}: ${msg}`);
+      const raw = data.detail || data.message || 'Something went wrong. Please try again.';
+      const msg = typeof raw === 'string' ? raw : 'Something went wrong. Please try again.';
+      console.error(`[API] Error ${res.status}:`, data);
       throw new Error(msg);
     }
     return data;

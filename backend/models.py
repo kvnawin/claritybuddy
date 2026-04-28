@@ -56,7 +56,7 @@ class FullReport(BaseModel):
 
 # ── Payment ──────────────────────────────────────────
 
-PlanType = Literal['single', 'combo', 'monthly', 'annual']
+PlanType = Literal['quiz1', 'quiz2', 'single', 'combo', 'monthly', 'annual']
 
 class CreatePaymentPayload(BaseModel):
     report_id: str
