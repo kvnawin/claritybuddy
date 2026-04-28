@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Compatibility Check — ClarityBuddy</title>
-  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="./css/main.css">
   <style>
     body { background: var(--cream); }
     .quiz-shell { min-height: 100svh; display: flex; flex-direction: column; }
@@ -97,6 +97,7 @@
 
 <script type="module">
 window.CB_API_URL = 'https://claritybuddy-api.railway.app';
+// window.CB_API_URL = 'http://localhost:8000';  // local dev
 
 import ClarityQuiz from './js/quiz.js';
 
