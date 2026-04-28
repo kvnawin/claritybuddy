@@ -6,9 +6,12 @@ Builds GPT prompts, calls OpenAI, parses structured report.
 import os
 import re
 import json
+import logging
 from pathlib import Path
 from typing import Dict, Any, List
 from openai import AsyncOpenAI
+
+logger = logging.getLogger(__name__)
 
 _client = AsyncOpenAI(
     api_key=os.getenv("OPENAI_API_KEY"),
@@ -36,9 +39,15 @@ async def generate_quiz1_report(
       strengths, blind_spots, journal_prompts, next_step
     }
     """
+    logger.info(f"[OpenAI] Generating Quiz1 report for {name}")
+    
     system_prompt = _load_prompt("quiz1_system.txt")
+    logger.info(f"[OpenAI] Loaded system prompt: {len(system_prompt)} chars")
+    
     user_message  = _build_quiz1_user_message(name, answers)
+    logger.info(f"[OpenAI] Built user message: {len(user_message)} chars")
 
+    logger.info(f"[OpenAI] Calling OpenAI API with model={MODEL}...")
     response = await _client.chat.completions.create(
         model=MODEL,
         max_tokens=1800,
@@ -50,7 +59,12 @@ async def generate_quiz1_report(
     )
 
     raw_text = response.choices[0].message.content.strip()
-    return _parse_quiz1_report(raw_text)
+    logger.info(f"[OpenAI] Received response: {len(raw_text)} chars")
+    
+    result = _parse_quiz1_report(raw_text)
+    logger.info(f"[OpenAI] Parsed report: archetype={result.get('archetype')}, score={result.get('score')}")
+    
+    return result
 
 
 def _build_quiz1_user_message(name: str, answers: Dict[str, str]) -> str:

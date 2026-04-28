@@ -70,22 +70,29 @@ async def submit_quiz1(payload: Quiz1Payload):
     Receive Quiz 1 answers → call GPT → save report → return preview data.
     Takes ~10-15 seconds (GPT generation time).
     """
+    logger.info(f"[API] POST /api/submit-quiz1 from {payload.email}")
+    
     # 1. Create DB row first (so we have an ID)
+    logger.info(f"[API] Creating DB report record...")
     report_id = db.create_report(
         email=payload.email,
         name=payload.name,
         quiz_type="quiz1",
         answers=payload.answers,
     )
+    logger.info(f"[API] Created report: {report_id}")
 
     try:
         # 2. Generate report via GPT
+        logger.info(f"[API] Calling OpenAI service...")
         result = await ai.generate_quiz1_report(
             name=payload.name,
             answers=payload.answers,
         )
+        logger.info(f"[API] OpenAI returned: {result}")
 
         # 3. Save result to DB
+        logger.info(f"[API] Saving report result to DB...")
         db.save_report_result(
             report_id=report_id,
             archetype=result["archetype"],
@@ -93,6 +100,7 @@ async def submit_quiz1(payload: Quiz1Payload):
             full_report_raw=result["raw_text"],
             parsed=result,
         )
+        logger.info(f"[API] Report saved successfully")
 
         return QuizResponse(
             report_id=report_id,
