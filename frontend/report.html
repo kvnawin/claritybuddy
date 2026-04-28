@@ -424,7 +424,7 @@
         </div>
         <div class="paywall__overlay">
           <p style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">Your full report is ready</p>
-          <button class="btn btn--primary btn--full" onclick="scrollToUnlock()">Unlock Full Report ₹299 →</button>
+          <button class="btn btn--primary btn--full" id="btn-scroll-unlock" onclick="scrollToUnlock()">Unlock Full Report ₹199 →</button>
         </div>
       </div>
 
@@ -596,6 +596,8 @@ async function loadPreview(reportId) {
   document.getElementById('plan-note').textContent  = PLAN_NOTES[currentPlan];
   const tab = document.getElementById('plan-tab-main');
   if (tab) { tab.dataset.plan = currentPlan; tab.textContent = `Report ₹${PRICE_DISPLAY[currentPlan]}`; }
+  const scrollBtn = document.getElementById('btn-scroll-unlock');
+  if (scrollBtn) scrollBtn.textContent = `Unlock Full Report ₹${PRICE_DISPLAY[currentPlan]} →`;
 
   renderHero(data.archetype, data.score);
   renderArchetypeTeaser(data.archetype);
