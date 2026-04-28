@@ -118,7 +118,7 @@
 <div id="subscription-upsell" class="upsell-row">
   <div class="upsell-row__eyebrow">Your Journey Doesn't End Here</div>
   <h2 class="upsell-row__title">The report tells you <em style="color:var(--gold)">what</em> you are.<br>The subscription helps you <em style="color:var(--gold)">become</em> who you want to be.</h2>
-  <p class="upsell-row__desc">The AI Clarity Coach knows your archetype, your fears, your patterns. It responds to your actual situations — not generic advice.</p>
+  <p class="upsell-row__desc">The AI Clarity Coach knows your persona, your fears, your patterns. It responds to your actual situations — not generic advice.</p>
   <a href="index.html#pricing" class="btn btn--cream btn--lg">Start My 30-Day Clarity Journey →</a>
   <p style="font-size:11px;color:rgba(250,247,242,0.3);margin-top:12px;">₹399/month · Cancel anytime</p>
 </div>
@@ -133,7 +133,7 @@
 
 <!-- Share -->
 <div class="share-wrap">
-  <h3>Share your archetype</h3>
+  <h3>Share your persona</h3>
   <p>Your friends probably recognise themselves in one of the 5 types too.</p>
   <div class="share-buttons">
     <button class="btn btn--outline btn--sm" onclick="shareWhatsApp()">Share on WhatsApp</button>
@@ -148,7 +148,7 @@
   const reportId  = localStorage.getItem('cb_report_id');
   const email     = localStorage.getItem('cb_user_email');
   const plan      = localStorage.getItem('cb_plan') || 'single';
-  const archetype = localStorage.getItem('cb_archetype') || '';
+  const archetype = localStorage.getItem('cb_persona') || '';
 
   if (email) document.getElementById('user-email').textContent = email;
   if (reportId) {
@@ -166,7 +166,7 @@
   /* Share */
   window.shareWhatsApp = function() {
     const text = archetype
-      ? `I just found out I'm "${archetype}" — a relationship clarity quiz built on the Relationship Clarity Framework. Try it free: ${window.location.origin}/quiz.html`
+      ? `I just discovered my relationship persona — a relationship clarity quiz built on the Relationship Clarity Framework. Try it free: ${window.location.origin}/quiz.html`
       : `Take this relationship clarity quiz — it showed me patterns I didn't even know I had: ${window.location.origin}/quiz.html`;
     window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
   };

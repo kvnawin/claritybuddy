@@ -403,7 +403,7 @@
 
     <!-- FREE: Archetype description (short teaser) -->
     <div class="preview-section animate-fadeup delay-1">
-      <div class="preview-section__eyebrow">Your Archetype</div>
+      <div class="preview-section__eyebrow">Your Persona</div>
       <h2 class="preview-section__title" id="archetype-title"></h2>
       <div class="preview-section__body" id="archetype-teaser"></div>
     </div>
@@ -494,14 +494,14 @@
       <div class="upsell-banner animate-fadeup">
         <div class="upsell-banner__eyebrow">Your Journey Continues</div>
         <h2 class="upsell-banner__title">Your report told you <em style="color:var(--gold-pale)">what</em> you are.<br>The subscription helps you <em style="color:var(--gold-pale)">become</em> who you want to be.</h2>
-        <p class="upsell-banner__desc">The AI Clarity Coach knows your archetype, your patterns, your fears. It responds to your actual situations — not generic advice.</p>
+        <p class="upsell-banner__desc">The AI Clarity Coach knows your persona, your patterns, your fears. It responds to your actual situations — not generic advice.</p>
         <a href="index.html#pricing" class="btn btn--cream btn--lg">Start Your 30-Day Clarity Journey →</a>
         <p style="font-size:11px;color:rgba(250,247,242,0.4);margin-top:12px;">₹399/month · Cancel anytime</p>
       </div>
 
       <!-- Share -->
       <div class="share-section">
-        <h3 class="share-title">Share your archetype</h3>
+        <h3 class="share-title">Share your persona</h3>
         <p class="share-sub">Quiz results are meant to be talked about.</p>
         <div class="share-buttons">
           <button class="btn btn--outline btn--sm" onclick="shareWhatsApp()">Share on WhatsApp</button>
@@ -528,7 +528,7 @@ async function openCheckout(reportId, plan, userInfo) {
 }
 
 /* ── Archetype metadata ── */
-const ARCHETYPES = {
+const PERSONAS = {
   'The Guarded Protector': {
     teaser: 'You have built strong walls — and with good reason. Your self-awareness is exceptional, and you are nearly impossible to manipulate. But the same walls that keep the wrong people out are also keeping the right ones at a distance.',
     tags: ['Self-Aware', 'Strong Boundaries', 'Fear of Vulnerability'],
@@ -627,7 +627,7 @@ function renderHero(archetype, score) {
   document.getElementById('score-num').textContent        = score;
   document.title = `${archetype} — ClarityBuddy`;
 
-  const meta = ARCHETYPES[archetype] || {};
+  const meta = PERSONAS[archetype] || {};
   const tagsEl = document.getElementById('archetype-tags');
   tagsEl.innerHTML = (meta.tags || [])
     .map(t => `<span class="tag tag--terra">${t}</span>`)
@@ -635,7 +635,7 @@ function renderHero(archetype, score) {
 }
 
 function renderArchetypeTeaser(archetype) {
-  const meta = ARCHETYPES[archetype] || {};
+  const meta = PERSONAS[archetype] || {};
   document.getElementById('archetype-title').textContent = archetype;
   document.getElementById('archetype-teaser').innerHTML =
     `<p>${meta.teaser || ''}</p>`;
@@ -693,7 +693,7 @@ window.handleUnlock = async function() {
 /* ── Share ── */
 window.shareWhatsApp = function() {
   const archetype = document.getElementById('archetype-name').textContent;
-  const text = `I just discovered I'm "${archetype}" on ClarityBuddy — a relationship clarity quiz built on the Relationship Clarity Framework. Take it free: ${window.location.origin}/quiz.html`;
+  const text = `I just discovered my relationship persona on ClarityBuddy — a relationship clarity quiz built on the Relationship Clarity Framework. Take it free: ${window.location.origin}/quiz.html`;
   window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
 };
 

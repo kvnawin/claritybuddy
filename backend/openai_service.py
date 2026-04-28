@@ -123,7 +123,7 @@ def _build_quiz1_user_message(name: str, answers: Dict[str, str]) -> str:
 def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
     """
     Expects the report to contain these section headers:
-    YOUR CLARITY ARCHETYPE, YOUR STRENGTHS, YOUR BLIND SPOTS,
+    YOUR CLARITY PERSONA, YOUR STRENGTHS, YOUR BLIND SPOTS,
     YOUR CLARITY SCORE, YOUR JOURNAL PROMPTS, YOUR NEXT STEP
     """
     sections = {}
@@ -134,7 +134,7 @@ def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
         stripped = line.strip()
         upper    = stripped.upper()
 
-        if "YOUR CLARITY ARCHETYPE" in upper:
+        if "YOUR CLARITY PERSONA" in upper:
             current = "archetype"; buffer = []
         elif "YOUR STRENGTHS" in upper:
             _flush(sections, current, buffer); current = "strengths"; buffer = []

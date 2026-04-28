@@ -229,7 +229,7 @@ class ClarityQuiz {
       console.log('[Quiz] Submission successful:', result);
       /* store report id locally so payment page can use it */
       localStorage.setItem('cb_report_id', result.report_id);
-      localStorage.setItem('cb_archetype', result.archetype || '');
+      localStorage.setItem('cb_persona', result.archetype || '');
       localStorage.setItem('cb_score',     result.score || '');
       localStorage.setItem('cb_quiz_type', this.quizType);
 
