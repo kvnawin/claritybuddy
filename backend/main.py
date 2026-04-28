@@ -36,9 +36,16 @@ FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5500")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL, "http://localhost:5500", "http://127.0.0.1:5500"],
+    allow_origins=[
+        FRONTEND_URL,
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:3000",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
+    allow_credentials=False,
 )
 
 # ── Health check ─────────────────────────────────────────
