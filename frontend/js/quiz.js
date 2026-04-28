@@ -232,7 +232,7 @@ class ClarityQuiz {
       if (this.onComplete) {
         this.onComplete(result.report_id);
       } else {
-        window.location.href = `report.html?id=${result.report_id}`;
+        window.location.href = `report?id=${result.report_id}`;
       }
     } catch (err) {
       this._hideLoader();
