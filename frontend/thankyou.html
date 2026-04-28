@@ -114,7 +114,7 @@
   </div>
 </div>
 
-<!-- Subscription upsell (only if they bought single report) -->
+<!-- MVP: subscription upsell hidden — enable when subscriptions are live
 <div id="subscription-upsell" class="upsell-row">
   <div class="upsell-row__eyebrow">Your Journey Doesn't End Here</div>
   <h2 class="upsell-row__title">The report tells you <em style="color:var(--gold)">what</em> you are.<br>The subscription helps you <em style="color:var(--gold)">become</em> who you want to be.</h2>
@@ -122,6 +122,7 @@
   <a href="index.html#pricing" class="btn btn--cream btn--lg">Start My 30-Day Clarity Journey →</a>
   <p style="font-size:11px;color:rgba(250,247,242,0.3);margin-top:12px;">₹399/month · Cancel anytime</p>
 </div>
+-->
 
 <!-- Compatibility quiz upsell -->
 <div id="compat-upsell" class="upsell-row" style="background: var(--warm); display: none;">
@@ -156,9 +157,7 @@
   }
 
   /* Show right upsell based on plan */
-  if (plan === 'combo' || plan === 'monthly' || plan === 'annual') {
-    document.getElementById('subscription-upsell').style.display = 'none';
-  }
+  // MVP: subscription-upsell element is hidden — skip toggle
   if (plan === 'single') {
     document.getElementById('compat-upsell').style.display = 'block';
   }
