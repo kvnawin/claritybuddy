@@ -16,6 +16,7 @@ class ClarityQuiz {
     this.currentIndex = 0;
     this.answers      = {};
     this.userData     = { name: '', email: '', partner_name: '' };
+    this._totalQ      = this.questions.filter(q => q.type !== 'email').length;
 
     this._render();
     this._bindNav();
@@ -42,10 +43,15 @@ class ClarityQuiz {
     const q = this.questions[index];
     this.currentIndex = index;
 
-    /* progress */
-    const pct = Math.round((index / this.questions.length) * 100);
-    this.progressFill.style.width = pct + '%';
-    this.progressText.textContent = `${index + 1} of ${this.questions.length}`;
+    /* progress — email step is not counted as a question */
+    if (q.type === 'email') {
+      this.progressText.textContent = 'Your details';
+    } else {
+      const qNum = this.questions.slice(0, index + 1).filter(q => q.type !== 'email').length;
+      const pct  = Math.round(((qNum - 1) / this._totalQ) * 100);
+      this.progressFill.style.width = pct + '%';
+      this.progressText.textContent = `${qNum} of ${this._totalQ}`;
+    }
 
     /* section label */
     if (this.sectionLabel && q.section) {
