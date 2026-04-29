@@ -293,7 +293,7 @@ def build_coach_system_prompt(report: Dict[str, Any]) -> str:
     return (
         template
         .replace("{user_name}",          report.get("name", ""))
-        .replace("{user_archetype}",     report.get("archetype", ""))
+        .replace("{user_persona}",        report.get("archetype", ""))
         .replace("{clarity_score}",      str(report.get("score", "")))
         .replace("{quiz_date}",          str(report.get("created_at", ""))[:10])
         .replace("{fear_answer}",        report.get("answers", {}).get("q15", ""))
@@ -312,16 +312,18 @@ def _flush(d: dict, key: str, buf: list) -> None:
 
 def _extract_archetype(text: str) -> str:
     archetypes = [
-        "The Guarded Protector",
-        "The Hopeful Healer",
-        "The Clarity Seeker",
-        "The Pressure Pleaser",
+        "The Careful Heart",
+        "The Devoted Giver",
+        "The Deep Thinker",
+        "The Dutiful Heart",
+        "The Free Spirit",
+        "The Romantic Believer",
         "The Grounded Chooser",
     ]
     for a in archetypes:
         if a.lower() in text.lower():
             return a
-    return "The Clarity Seeker"  # safe default
+    return "The Deep Thinker"  # safe default
 
 def _extract_score(text: str, max_score: int = 100) -> int:
     # Prefer "X/max_score" pattern — prevents grabbing the denominator first

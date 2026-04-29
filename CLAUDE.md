@@ -170,13 +170,15 @@ Plan keys used in code: `'single'`, `'combo'`, `'monthly'`, `'annual'`
 
 ---
 
-## THE 5 PERSONAS (Quiz 1 output)
+## THE 7 PERSONAS (Quiz 1 output)
 
-1. **The Guarded Protector** — High self-awareness, walls up, fear of vulnerability
-2. **The Hopeful Healer** — Over-gives, attracted to unavailable men, fixes not loves
-3. **The Clarity Seeker** — Analytical, good values, analysis paralysis
-4. **The Pressure Pleaser** — Decides by family/social timeline, not own wants
-5. **The Grounded Chooser** — Aspirational goal persona, chooses from clarity
+1. **The Careful Heart** — Discerning, cautious after past hurt, walls up
+2. **The Devoted Giver** — Over-gives, deeply nurturing, loses herself in caring
+3. **The Deep Thinker** — Analytical, good values, overthinks, analysis paralysis
+4. **The Dutiful Heart** — Decides by family/social expectations, not own wants
+5. **The Free Spirit** — Fiercely independent, uses freedom as emotional distance
+6. **The Romantic Believer** — Sees potential over reality, loyal past the evidence
+7. **The Grounded Chooser** — Aspirational goal persona, chooses from clarity
 
 ---
 

@@ -150,17 +150,17 @@
     .step__title { font-family: var(--font-serif); font-size: 19px; margin-bottom: 8px; }
     .step__body  { font-size: 13px; line-height: 1.75; color: var(--ink-soft); }
 
-    /* ── ARCHETYPES ── */
+    /* ── PERSONAS ── */
     .arch-grid {
       display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
     }
-    @media(min-width:1024px) { .arch-grid { grid-template-columns: repeat(4,1fr); } }
+    @media(min-width:1024px) { .arch-grid { grid-template-columns: repeat(3,1fr); } }
 
     .arch-goal {
       grid-column: 1 / -1;
       display: flex; gap: 16px; align-items: flex-start;
     }
-    @media(min-width:1024px) { .arch-goal { grid-column: auto; display: block; } }
+    @media(min-width:1024px) { .arch-goal { grid-column: 1 / -1; display: flex; } }
 
     /* ── QUIZZES ── */
     .quiz-grid {
@@ -356,34 +356,46 @@
     <div class="arch-grid">
       <div class="arch-card">
         <div class="arch-card__icon">🛡</div>
-        <div class="arch-card__name">The Guarded Protector</div>
-        <span class="arch-card__badge">Self-protective</span>
-        <p class="arch-card__desc">High self-awareness, strong walls. Fear of vulnerability blocks the connection she wants most.</p>
+        <div class="arch-card__name">The Careful Heart</div>
+        <span class="arch-card__badge">Discerning</span>
+        <p class="arch-card__desc">Has been hurt before. Takes time to trust. Her discernment is her superpower — and sometimes her barrier.</p>
       </div>
       <div class="arch-card">
         <div class="arch-card__icon">🌿</div>
-        <div class="arch-card__name">The Hopeful Healer</div>
-        <span class="arch-card__badge">Over-giving</span>
-        <p class="arch-card__desc">Enormous love — often given to people who can't receive it. Confuses fixing with loving.</p>
+        <div class="arch-card__name">The Devoted Giver</div>
+        <span class="arch-card__badge">Deeply Caring</span>
+        <p class="arch-card__desc">Loves deeply and gives generously. Her care is a gift — but she often gives it to people who cannot fully receive it.</p>
       </div>
       <div class="arch-card">
         <div class="arch-card__icon">🔍</div>
-        <div class="arch-card__name">The Clarity Seeker</div>
+        <div class="arch-card__name">The Deep Thinker</div>
         <span class="arch-card__badge">Analytical</span>
-        <p class="arch-card__desc">Strong values, overthinks every decision. Analysis paralysis means good men lose patience.</p>
+        <p class="arch-card__desc">Sharp mind, clear values, overthinks every step. Certainty is her comfort — but some things only reveal through experience.</p>
       </div>
       <div class="arch-card">
-        <div class="arch-card__icon">⏳</div>
-        <div class="arch-card__name">The Pressure Pleaser</div>
-        <span class="arch-card__badge">People-pleasing</span>
-        <p class="arch-card__desc">Chooses based on family or social timelines. Rarely asks: what do I actually want?</p>
+        <div class="arch-card__icon">🏡</div>
+        <div class="arch-card__name">The Dutiful Heart</div>
+        <span class="arch-card__badge">Tradition-Led</span>
+        <p class="arch-card__desc">Deeply family-oriented and considerate. Makes decisions with everyone's expectations in mind — except her own.</p>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card__icon">🕊</div>
+        <div class="arch-card__name">The Free Spirit</div>
+        <span class="arch-card__badge">Independent</span>
+        <p class="arch-card__desc">Self-sufficient and self-aware. Values her freedom fiercely — sometimes as a shield against real intimacy.</p>
+      </div>
+      <div class="arch-card">
+        <div class="arch-card__icon">🌸</div>
+        <div class="arch-card__name">The Romantic Believer</div>
+        <span class="arch-card__badge">Optimistic</span>
+        <p class="arch-card__desc">Sees the best in people and holds on. Her loyalty is beautiful — and sometimes keeps her in places she's outgrown.</p>
       </div>
       <div class="arch-card arch-card--goal arch-goal">
         <div class="arch-card__icon" style="flex-shrink:0;">✦</div>
         <div>
           <div class="arch-card__name">The Grounded Chooser</div>
-          <span class="arch-card__badge" style="color:var(--gold);">The Goal — Aspirational Archetype</span>
-          <p class="arch-card__desc">Emotionally ready. Chooses from clarity, not fear. Knows her worth. This is where we're all headed.</p>
+          <span class="arch-card__badge" style="color:var(--gold);">The Goal — Aspirational Persona</span>
+          <p class="arch-card__desc">Emotionally ready. Chooses from clarity, not fear. Knows her worth. This is where every clarity journey leads.</p>
         </div>
       </div>
     </div>
@@ -439,12 +451,12 @@
       <p style="font-size:13px;color:var(--ink-soft);margin-bottom:0;">Every month your life gives you new situations to bring to it. That's what makes the subscription worth it.</p>
     </div>
     <div class="coach-chat-demo">
-      <div class="coach-label">Sample conversation · Hopeful Healer persona</div>
+      <div class="coach-label">Sample conversation · Devoted Giver persona</div>
       <div class="coach-demo-msg coach-demo-msg--user">
         <span>He takes 6-8 hours to reply and I don't know if I'm overreacting</span>
       </div>
       <div class="coach-demo-msg coach-demo-msg--coach">
-        <span>You're not overreacting — but I want to be honest with you about what's happening here. Your Hopeful Healer pattern tends to normalise inconsistency because inconsistency is familiar. The 6-8 hours doesn't bother you as much as the uncertainty of not knowing where you stand.<br><br>Consistency is the biggest green flag. Its absence is information — not a problem to explain away.<br><br>If a friend described this exact situation to you, what would you tell her?</span>
+        <span>You're not overreacting — but I want to be honest with you about what's happening here. Your Devoted Giver pattern tends to normalise inconsistency because inconsistency is familiar. The 6-8 hours doesn't bother you as much as the uncertainty of not knowing where you stand.<br><br>Consistency is the biggest green flag. Its absence is information — not a problem to explain away.<br><br>If a friend described this exact situation to you, what would you tell her?</span>
       </div>
     </div>
   </div>
@@ -524,17 +536,17 @@
       <div class="testi-card">
         <p class="testi-card__quote">I've been overthinking this relationship for eight months. The report told me in 15 minutes what I already knew but couldn't say out loud.</p>
         <div class="testi-card__author">Priya M., 31 — Bangalore</div>
-        <div class="testi-card__archetype">The Clarity Seeker</div>
+        <div class="testi-card__archetype">The Deep Thinker</div>
       </div>
       <div class="testi-card">
-        <p class="testi-card__quote">The Hopeful Healer persona described me so accurately I sent it to my best friend. She said — this is literally you. It didn't feel like AI at all.</p>
+        <p class="testi-card__quote">The Devoted Giver persona described me so accurately I sent it to my best friend. She said — this is literally you. It didn't feel like AI at all.</p>
         <div class="testi-card__author">Ananya R., 27 — Mumbai</div>
-        <div class="testi-card__archetype">The Hopeful Healer</div>
+        <div class="testi-card__archetype">The Devoted Giver</div>
       </div>
       <div class="testi-card">
-        <p class="testi-card__quote">I was choosing for my family's timeline, not mine. The Pressure Pleaser report was a wake-up call I didn't know I needed. Worth every rupee.</p>
+        <p class="testi-card__quote">I was choosing for my family's timeline, not mine. The Dutiful Heart report was a wake-up call I didn't know I needed. Worth every rupee.</p>
         <div class="testi-card__author">Deepa K., 34 — Chennai</div>
-        <div class="testi-card__archetype">The Pressure Pleaser</div>
+        <div class="testi-card__archetype">The Dutiful Heart</div>
       </div>
     </div>
   </div>

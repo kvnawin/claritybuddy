@@ -530,26 +530,34 @@ async function openCheckout(reportId, plan, userInfo) {
   return _open(reportId, plan, userInfo);
 }
 
-/* ── Archetype metadata ── */
+/* ── Persona metadata ── */
 const PERSONAS = {
-  'The Guarded Protector': {
-    teaser: 'You have built strong walls — and with good reason. Your self-awareness is exceptional, and you are nearly impossible to manipulate. But the same walls that keep the wrong people out are also keeping the right ones at a distance.',
-    tags: ['Self-Aware', 'Strong Boundaries', 'Fear of Vulnerability'],
+  'The Careful Heart': {
+    teaser: 'You have built strong walls — and with good reason. Your discernment is one of your greatest strengths. But the same protection that keeps the wrong people out can also keep the right ones at a distance. Somewhere, you started treating consistency like a red flag.',
+    tags: ['Discerning', 'Self-Protective', 'Guarded'],
   },
-  'The Hopeful Healer': {
-    teaser: 'You love deeply and genuinely — your capacity for empathy is one of your most beautiful qualities. But right now, that love is being spent in places that cannot receive it. You are drawn to potential rather than reality.',
-    tags: ['Deeply Empathetic', 'Fixer Pattern', 'Over-giving'],
+  'The Devoted Giver': {
+    teaser: 'You love deeply and genuinely — your capacity for care is one of your most beautiful qualities. But right now, that love is being spent in places that cannot fully receive it. The right person will not need you to earn your place with them.',
+    tags: ['Deeply Caring', 'Generous', 'Over-giving'],
   },
-  'The Clarity Seeker': {
-    teaser: 'Your mind is sharp and your values are clear. You approach love with the same analytical care you bring to everything else. The challenge is that some things can only be understood through experience — not analysis.',
-    tags: ['Analytical', 'High Standards', 'Analysis Paralysis'],
+  'The Deep Thinker': {
+    teaser: 'Your mind is sharp and your values are clear. You approach love with the same careful logic you bring to everything else. The challenge is that some things can only be understood through experience — not analysis. Certainty is not a prerequisite for a good decision.',
+    tags: ['Analytical', 'High Standards', 'Overthinking'],
   },
-  'The Pressure Pleaser': {
-    teaser: 'You are warm, considerate, and deeply family-oriented. But somewhere along the way, you started making relationship decisions based on everyone\'s timeline except your own. Your own desires are valid — and they matter.',
-    tags: ['Family-Oriented', 'People-Pleasing', 'External Pressure'],
+  'The Dutiful Heart': {
+    teaser: 'You are warm, deeply family-oriented, and considerate of the people around you. But somewhere along the way, you started making relationship decisions based on everyone\'s expectations except your own. Your desires are not selfish — they are the foundation of a genuine choice.',
+    tags: ['Family-Oriented', 'Tradition-Led', 'People-Pleasing'],
+  },
+  'The Free Spirit': {
+    teaser: 'You are self-sufficient and deeply self-aware. You don\'t need a relationship to feel whole — and that is a real strength. But there\'s a difference between choosing space and using it as distance. Real connection will ask you to stay when your instinct is to pull back.',
+    tags: ['Independent', 'Self-Sufficient', 'Commitment-Cautious'],
+  },
+  'The Romantic Believer': {
+    teaser: 'You see the best in people, and you hold on. Your loyalty and optimism are genuinely beautiful qualities. But there\'s a pattern worth looking at: you tend to fall in love with potential rather than reality. Behaviour today tells you more than the person someone could become.',
+    tags: ['Optimistic', 'Loyal', 'Sees Potential'],
   },
   'The Grounded Chooser': {
-    teaser: 'You are emotionally ready and values-aligned. You choose from a place of clarity rather than fear, loneliness, or pressure. This is where every woman\'s clarity journey is headed — and you\'re already here.',
+    teaser: 'You are emotionally ready and values-aligned. You choose from a place of clarity rather than fear, loneliness, or pressure. This is where every woman\'s clarity journey is headed — and you\'re already here. The work now is maintaining this clarity under pressure.',
     tags: ['Emotionally Ready', 'Self-Knowing', 'Values-Aligned'],
   },
 };
