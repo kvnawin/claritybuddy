@@ -48,7 +48,7 @@ class ClarityQuiz {
       this.progressText.textContent = 'Your details';
     } else {
       const qNum = this.questions.slice(0, index + 1).filter(q => q.type !== 'email').length;
-      const pct  = Math.round(((qNum - 1) / this._totalQ) * 100);
+      const pct  = Math.round((qNum / this._totalQ) * 100);
       this.progressFill.style.width = pct + '%';
       this.progressText.textContent = `${qNum} of ${this._totalQ}`;
     }
