@@ -241,7 +241,11 @@ def _parse_quiz2_report(raw: str) -> Dict[str, Any]:
         upper    = stripped.upper()
 
         if "COMPATIBILITY SCORE" in upper or "OVERALL SCORE" in upper:
-            current = "score"; buffer = []
+            _flush(sections, current, buffer); current = "score"
+            # Capture any inline score on the same line, e.g. "COMPATIBILITY SCORE: 42/60"
+            header_key = "COMPATIBILITY SCORE" if "COMPATIBILITY SCORE" in upper else "OVERALL SCORE"
+            tail = stripped[upper.find(header_key) + len(header_key):].strip(' :-—–')
+            buffer = [tail] if tail else []
         elif "DIMENSION SCORES" in upper or "DIMENSION BREAKDOWN" in upper:
             _flush(sections, current, buffer); current = "dimensions_raw"; buffer = []
         elif "GREEN FLAGS" in upper:
@@ -257,7 +261,15 @@ def _parse_quiz2_report(raw: str) -> Dict[str, Any]:
 
     _flush(sections, current, buffer)
 
-    score      = _extract_score(sections.get("score", ""), max_score=60)
+    score_text = sections.get("score", "")
+    score      = _extract_score(score_text, max_score=60)
+    # Fallback: if section was empty, search full raw text for X/60
+    if not score_text:
+        m = re.search(r'(\d{1,2})\s*/\s*60\b', raw)
+        if m:
+            val = int(m.group(1))
+            if 1 <= val <= 60:
+                score = val
     prompts    = _extract_prompts(sections.get("journal_prompts", ""))
     dimensions = _extract_dimensions(sections.get("dimensions_raw", ""))
 
