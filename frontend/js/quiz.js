@@ -81,7 +81,7 @@ class ClarityQuiz {
     const selected = this.answers[q.id] || null;
 
     this.questionWrap.innerHTML = `
-      <p class="quiz-q-num text-xs text-soft mb-8">Question ${this.currentIndex + 1}</p>
+      <p class="quiz-q-num text-xs text-soft mb-8">Question ${this.questions.slice(0, this.currentIndex + 1).filter(q => q.type !== 'email').length}</p>
       <h2 class="quiz-question mb-24">${q.text}</h2>
       <div class="quiz-options" role="radiogroup" aria-label="${q.text}">
         ${q.options.map((opt, i) => `
