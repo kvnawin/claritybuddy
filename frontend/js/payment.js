@@ -26,7 +26,20 @@ export async function openCheckout(reportId, plan = 'single', userInfo = {}) {
   await _loadRazorpayScript();
 
   const btn = document.getElementById('btn-unlock');
-  if (btn) { btn.classList.add('btn--loading'); btn.disabled = true; }
+  if (btn) {
+    btn.dataset.originalText = btn.textContent.trim();
+    btn.textContent = 'Opening Razorpay…';
+    btn.classList.add('btn--loading');
+    btn.disabled = true;
+  }
+
+  const _resetBtn = () => {
+    if (btn) {
+      btn.textContent = btn.dataset.originalText || 'Unlock Full Report';
+      btn.classList.remove('btn--loading');
+      btn.disabled = false;
+    }
+  };
 
   try {
     const order = await createPaymentOrder({ report_id: reportId, plan });
@@ -44,9 +57,7 @@ export async function openCheckout(reportId, plan = 'single', userInfo = {}) {
       },
       theme: { color: '#C0644A' },
       modal: {
-        ondismiss: () => {
-          if (btn) { btn.classList.remove('btn--loading'); btn.disabled = false; }
-        },
+        ondismiss: _resetBtn,
       },
       handler: async (response) => {
         await _onPaymentSuccess(response, reportId);
@@ -56,7 +67,7 @@ export async function openCheckout(reportId, plan = 'single', userInfo = {}) {
     const rzp = new window.Razorpay(options);
     rzp.open();
   } catch (err) {
-    if (btn) { btn.classList.remove('btn--loading'); btn.disabled = false; }
+    _resetBtn();
     _showError(err.message || 'Could not open payment. Please try again.');
   }
 }

@@ -174,17 +174,20 @@ p { color: var(--ink-mid); line-height: 1.75; }
 .btn--lg { font-size: 13px; padding: 18px 40px; }
 
 .btn--loading {
-  opacity: 0.7;
+  opacity: 0.85;
   pointer-events: none;
 }
 .btn--loading::after {
   content: '';
-  width: 14px;
-  height: 14px;
-  border: 2px solid rgba(255,255,255,0.4);
-  border-top-color: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 10px;
+  width: 15px;
+  height: 15px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
   border-radius: 50%;
-  animation: spin 0.7s linear infinite;
+  animation: spin 0.65s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
