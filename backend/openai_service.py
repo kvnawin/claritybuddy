@@ -141,7 +141,10 @@ def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
         elif "YOUR BLIND SPOTS" in upper:
             _flush(sections, current, buffer); current = "blind_spots"; buffer = []
         elif "YOUR CLARITY SCORE" in upper:
-            _flush(sections, current, buffer); current = "score"; buffer = []
+            _flush(sections, current, buffer); current = "score"
+            # Capture any inline score on the same line, e.g. "YOUR CLARITY SCORE: 72/100"
+            tail = stripped[upper.find("YOUR CLARITY SCORE") + len("YOUR CLARITY SCORE"):].strip(' :-—–')
+            buffer = [tail] if tail else []
         elif "YOUR JOURNAL PROMPTS" in upper:
             _flush(sections, current, buffer); current = "journal_prompts"; buffer = []
         elif "YOUR NEXT STEP" in upper:
@@ -158,6 +161,13 @@ def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
     # Extract score number
     score_text = sections.get("score", "")
     score      = _extract_score(score_text)
+    # Fallback: if section was empty, search the full raw text for X/100
+    if not score_text:
+        m = re.search(r'(\d{2,3})\s*/\s*100\b', raw)
+        if m:
+            val = int(m.group(1))
+            if 1 <= val <= 100:
+                score = val
 
     # Parse journal prompts as list
     prompts_text = sections.get("journal_prompts", "")
