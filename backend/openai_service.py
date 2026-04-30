@@ -60,7 +60,8 @@ async def generate_quiz1_report(
 
     raw_text = response.choices[0].message.content.strip()
     logger.info(f"[OpenAI] Received response: {len(raw_text)} chars")
-    
+    logger.info(f"[OpenAI] Raw start: {raw_text[:400]!r}")
+
     result = _parse_quiz1_report(raw_text)
     logger.info(f"[OpenAI] Parsed report: archetype={result.get('archetype')}, score={result.get('score')}")
     
@@ -120,12 +121,24 @@ def _build_quiz1_user_message(name: str, answers: Dict[str, str]) -> str:
     return "\n".join(lines)
 
 
+def _quiz1_section_key(upper: str):
+    """Map a line to a section key, tolerating singular/plural and markdown decoration."""
+    if "CLARITY PERSONA" in upper or "YOUR PERSONA" in upper:
+        return "archetype"
+    if "YOUR STRENGTH" in upper:          # covers "YOUR STRENGTHS" and "YOUR STRENGTH"
+        return "strengths"
+    if "BLIND SPOT" in upper:             # covers "YOUR BLIND SPOTS" and "BLIND SPOT"
+        return "blind_spots"
+    if "CLARITY SCORE" in upper:
+        return "score"
+    if "JOURNAL PROMPT" in upper:         # covers "YOUR JOURNAL PROMPTS" and "JOURNAL PROMPT"
+        return "journal_prompts"
+    if "NEXT STEP" in upper:
+        return "next_step"
+    return None
+
+
 def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
-    """
-    Expects the report to contain these section headers:
-    YOUR CLARITY PERSONA, YOUR STRENGTHS, YOUR BLIND SPOTS,
-    YOUR CLARITY SCORE, YOUR JOURNAL PROMPTS, YOUR NEXT STEP
-    """
     sections = {}
     current  = None
     buffer   = []
@@ -133,26 +146,23 @@ def _parse_quiz1_report(raw: str) -> Dict[str, Any]:
     for line in raw.splitlines():
         stripped = line.strip()
         upper    = stripped.upper()
+        key      = _quiz1_section_key(upper)
 
-        if "YOUR CLARITY PERSONA" in upper:
-            current = "archetype"; buffer = []
-        elif "YOUR STRENGTHS" in upper:
-            _flush(sections, current, buffer); current = "strengths"; buffer = []
-        elif "YOUR BLIND SPOTS" in upper:
-            _flush(sections, current, buffer); current = "blind_spots"; buffer = []
-        elif "YOUR CLARITY SCORE" in upper:
-            _flush(sections, current, buffer); current = "score"
-            # Capture any inline score on the same line, e.g. "YOUR CLARITY SCORE: 72/100"
-            tail = stripped[upper.find("YOUR CLARITY SCORE") + len("YOUR CLARITY SCORE"):].strip(' :-—–')
-            buffer = [tail] if tail else []
-        elif "YOUR JOURNAL PROMPTS" in upper:
-            _flush(sections, current, buffer); current = "journal_prompts"; buffer = []
-        elif "YOUR NEXT STEP" in upper:
-            _flush(sections, current, buffer); current = "next_step"; buffer = []
+        if key is not None:
+            _flush(sections, current, buffer)
+            current = key
+            if key == "score":
+                # Capture inline score, e.g. "YOUR CLARITY SCORE: 72/100"
+                pos  = upper.find("CLARITY SCORE") + len("CLARITY SCORE")
+                tail = stripped[pos:].strip(' :-—–')
+                buffer = [tail] if tail else []
+            else:
+                buffer = []
         elif current:
             buffer.append(stripped)
 
     _flush(sections, current, buffer)
+    logger.info(f"[Parser] quiz1 sections found: { {k: bool(v) for k, v in sections.items()} }")
 
     # Extract archetype name
     arch_text = sections.get("archetype", "")
@@ -242,24 +252,24 @@ def _parse_quiz2_report(raw: str) -> Dict[str, Any]:
 
         if "COMPATIBILITY SCORE" in upper or "OVERALL SCORE" in upper:
             _flush(sections, current, buffer); current = "score"
-            # Capture any inline score on the same line, e.g. "COMPATIBILITY SCORE: 42/60"
             header_key = "COMPATIBILITY SCORE" if "COMPATIBILITY SCORE" in upper else "OVERALL SCORE"
             tail = stripped[upper.find(header_key) + len(header_key):].strip(' :-—–')
             buffer = [tail] if tail else []
-        elif "DIMENSION SCORES" in upper or "DIMENSION BREAKDOWN" in upper:
+        elif "DIMENSION SCORE" in upper or "DIMENSION BREAKDOWN" in upper or "DIMENSION ANALYSIS" in upper:
             _flush(sections, current, buffer); current = "dimensions_raw"; buffer = []
-        elif "GREEN FLAGS" in upper:
+        elif "GREEN FLAG" in upper:       # covers "GREEN FLAGS" and "GREEN FLAG"
             _flush(sections, current, buffer); current = "green_flags"; buffer = []
-        elif "RISK ZONES" in upper or "CAUTION" in upper:
+        elif "RISK ZONE" in upper or "CAUTION" in upper or "CONCERN" in upper:
             _flush(sections, current, buffer); current = "risk_zones"; buffer = []
-        elif "MOVE FORWARD" in upper or "DECISION" in upper or "STEP BACK" in upper:
+        elif "MOVE FORWARD" in upper or "DECISION" in upper or "STEP BACK" in upper or "RECOMMENDATION" in upper:
             _flush(sections, current, buffer); current = "decision"; buffer = []
-        elif "JOURNAL PROMPTS" in upper:
+        elif "JOURNAL PROMPT" in upper:   # covers "JOURNAL PROMPTS" and "JOURNAL PROMPT"
             _flush(sections, current, buffer); current = "journal_prompts"; buffer = []
         elif current:
             buffer.append(stripped)
 
     _flush(sections, current, buffer)
+    logger.info(f"[Parser] quiz2 sections found: { {k: bool(v) for k, v in sections.items()} }")
 
     score_text = sections.get("score", "")
     score      = _extract_score(score_text, max_score=60)
