@@ -714,6 +714,11 @@ window.scrollToUnlock = function() {
 };
 
 window.handleUnlock = async function() {
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isDev) {
+    await loadFullReport(currentReportId);
+    return;
+  }
   const userInfo = {
     name:  localStorage.getItem('cb_user_name')  || '',
     email: localStorage.getItem('cb_user_email') || '',
