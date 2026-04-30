@@ -826,32 +826,35 @@ window.downloadReport = async function() {
     setFill(C.terra);  doc.rect(0,    0, PW * 0.55, 3, 'F');
     setFill(C.gold);   doc.rect(PW * 0.55, 0, PW * 0.45, 3, 'F');
 
-    /* warm header band */
-    setFill(C.warm); doc.rect(0, 3, PW, 52, 'F');
+    /* warm header band — tall enough for stacked score layout */
+    setFill(C.warm); doc.rect(0, 3, PW, 66, 'F');
 
     y = 14;
 
     /* eyebrow */
     setFont('helvetica', 7); setColor(C.terra);
     doc.text('YOUR CLARITY REPORT  ·  CLARITYBUDDY', PW / 2, y, { align: 'center', charSpace: 0.8 });
-    y += 11;
+    y += 12;
 
     /* persona name */
     setFont('times', 26); setColor(C.ink);
     doc.text(archetype, PW / 2, y, { align: 'center' });
-    y += 10;
+    y += 9;
 
-    /* score row */
-    const barX = ML + 26, barW = CW - 36, barH = 2.5;
+    /* CLARITY SCORE label — centred below persona name */
     setFont('helvetica', 7); setColor(C.inkSoft);
-    doc.text('CLARITY SCORE', ML, y - 0.5, { charSpace: 0.5 });
-    /* bar track */
-    setFill(C.border); doc.roundedRect(barX, y - 3, barW, barH, 1, 1, 'F');
-    /* bar fill */
-    setFill(C.terra);  doc.roundedRect(barX, y - 3, barW * scorePct, barH, 1, 1, 'F');
-    /* score number */
-    setFont('times', 16); setColor(C.terra);
-    doc.text(String(score), PW - MR, y, { align: 'right' });
+    doc.text('CLARITY SCORE', PW / 2, y, { align: 'center', charSpace: 0.6 });
+    y += 5;
+
+    /* score bar — full content width */
+    const barX = ML, barW = CW, barH = 2.5;
+    setFill(C.border); doc.roundedRect(barX, y - 2, barW, barH, 1, 1, 'F');
+    setFill(C.terra);  doc.roundedRect(barX, y - 2, barW * scorePct, barH, 1, 1, 'F');
+    y += 6;
+
+    /* score number centred under bar */
+    setFont('times', 13); setColor(C.terra);
+    doc.text(`${score} / ${maxScore}`, PW / 2, y, { align: 'center' });
     y += 9;
 
     /* tags */
@@ -861,7 +864,7 @@ window.downloadReport = async function() {
       y += 8;
     }
 
-    y = 62; /* fixed end of header band */
+    y = 76; /* fixed end of header band */
 
     /* ═══════════════════════════════
        CONTENT SECTIONS
@@ -887,18 +890,23 @@ window.downloadReport = async function() {
       divider();
       sectionLabel('Journal Prompts — Questions to Sit With');
       for (const prompt of promptTexts) {
-        const lines  = doc.splitTextToSize(prompt, CW - 8);
-        const boxH   = lines.length * 5.5 + 8;
-        newPageIfNeeded(boxH + 4);
+        /* set font BEFORE splitTextToSize so line-break calculation matches render */
+        doc.setFont('times', 'italic');
+        doc.setFontSize(11);
+        const textX  = ML + 7;          /* left border (2.5) + inner padding (4.5) */
+        const textW  = CW - 12;         /* narrow enough to stay inside right edge */
+        const lines  = doc.splitTextToSize(prompt, textW);
+        const boxH   = lines.length * 5.5 + 12; /* generous top+bottom padding */
+        newPageIfNeeded(boxH + 6);
         /* warm box */
-        setFill(C.warm);  doc.rect(ML,     y - 3, CW,  boxH, 'F');
+        setFill(C.warm);  doc.rect(ML, y - 4, CW, boxH, 'F');
         /* terra left border */
-        setFill(C.terra); doc.rect(ML,     y - 3, 2.5, boxH, 'F');
-        /* italic text */
-        doc.setFont('times', 'italic'); setFont('times', 11); setColor(C.ink);
+        setFill(C.terra); doc.rect(ML, y - 4, 2.5, boxH, 'F');
+        /* text */
+        setColor(C.ink);
         let ty = y + 2;
-        for (const line of lines) { doc.text(line, ML + 6, ty); ty += 5.5; }
-        y += boxH + 4;
+        for (const line of lines) { doc.text(line, textX, ty); ty += 5.5; }
+        y += boxH + 5;
       }
     }
 
