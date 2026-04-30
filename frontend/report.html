@@ -521,8 +521,6 @@
 </div><!-- /report-content -->
 
 <div id="cb-toast" class="toast"></div>
-<!-- Off-screen container used only for PDF generation -->
-<div id="pdf-source" style="position:absolute;left:-9999px;top:0;width:210mm;"></div>
 
 <script type="module">
 window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
@@ -731,60 +729,115 @@ window.downloadReport = async function() {
   const btn = document.getElementById('btn-download');
   if (btn) { btn.textContent = 'Preparing…'; btn.disabled = true; btn.classList.add('btn--loading'); }
 
+  /* Overlay blocks the page while the PDF element is briefly visible for capture */
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(40,30,26,0.82);z-index:9000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;';
+  overlay.innerHTML = `
+    <div style="width:40px;height:40px;border:2px solid rgba(250,247,242,0.3);border-top-color:#C0644A;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+    <p style="color:#FAF7F2;font-family:Georgia,serif;font-size:15px;">Generating your report…</p>`;
+  document.body.appendChild(overlay);
+
+  /* PDF element rendered at A4 width, z-index just below overlay (invisible to user) */
+  const pdfEl = document.createElement('div');
+  pdfEl.style.cssText = 'position:fixed;left:0;top:0;width:794px;z-index:8999;background:#FAF7F2;';
+  document.body.appendChild(pdfEl);
+
   try {
     await _loadHtml2Pdf();
 
-    const archetype = document.getElementById('archetype-name').textContent;
-    const score     = document.getElementById('score-num').textContent;
-    const teaser    = document.getElementById('archetype-teaser').innerHTML;
-    const strengths = document.getElementById('section-strengths').innerHTML;
-    const blindspots= document.getElementById('section-blindspots').innerHTML;
-    const nextstep  = document.getElementById('section-nextstep').innerHTML;
+    const archetype  = document.getElementById('archetype-name').textContent;
+    const score      = document.getElementById('score-num').textContent;
+    const quizType   = localStorage.getItem('cb_quiz_type') || 'quiz1';
+    const maxScore   = quizType === 'quiz2' ? 60 : 100;
+    const scorePct   = Math.round((parseInt(score) / maxScore) * 100);
+    const teaserText = document.getElementById('archetype-teaser').innerText;
+    const strengthsText  = document.getElementById('section-strengths').innerText;
+    const blindspotsText = document.getElementById('section-blindspots').innerText;
+    const nextstepText   = document.getElementById('section-nextstep').innerText;
+    const promptTexts    = Array.from(document.querySelectorAll('#section-prompts .journal-prompt'))
+                              .map(p => p.innerText);
+    const tags = (PERSONAS[archetype]?.tags || [])
+                   .map(t => `<span style="display:inline-block;font-size:10px;font-family:Arial,sans-serif;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(192,100,74,0.35);color:#C0644A;margin:3px;">${t}</span>`)
+                   .join('');
 
-    const promptEls = document.querySelectorAll('#section-prompts .journal-prompt');
-    const promptsHtml = Array.from(promptEls).map(p =>
-      `<div style="background:#F4EDE3;border-left:3px solid #C0644A;padding:12px 16px;font-style:italic;margin-bottom:10px;font-size:13px;line-height:1.6;color:#281E1A;">${p.textContent}</div>`
+    /* ── helpers ── */
+    const label = txt =>
+      `<p style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#C0644A;margin:0 0 8px;font-family:Arial,sans-serif;">${txt}</p>`;
+    const bodyText = txt =>
+      txt.split('\n').filter(l => l.trim())
+         .map(l => `<p style="margin:0 0 10px;font-size:13px;line-height:1.85;color:#5A4540;font-family:Georgia,serif;">${l}</p>`)
+         .join('');
+    const section = (lbl, content, bg) => `
+      <div style="padding:24px 48px;${bg ? `background:${bg};` : ''}border-bottom:1px solid rgba(40,30,26,0.1);">
+        ${label(lbl)}${content}
+      </div>`;
+
+    const promptsHtml = promptTexts.map(p =>
+      `<div style="background:#F4EDE3;border-left:3px solid #C0644A;padding:12px 16px;font-style:italic;margin-bottom:10px;font-size:13px;line-height:1.65;color:#281E1A;font-family:Georgia,serif;">${p}</div>`
     ).join('');
 
-    const s = (tag, style, html) => `<${tag} style="${style}">${html}</${tag}>`;
-    const section = (label, html) => `
-      <div style="margin-bottom:28px;">
-        ${s('p','font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#C0644A;margin-bottom:8px;font-family:Arial,sans-serif;', label)}
-        <div style="font-size:13px;line-height:1.8;color:#5A4540;">${html}</div>
+    pdfEl.innerHTML = `
+      <div style="font-family:Georgia,serif;color:#281E1A;background:#FAF7F2;">
+
+        <!-- Header -->
+        <div style="background:#F4EDE3;padding:40px 48px 32px;border-bottom:1px solid rgba(40,30,26,0.1);position:relative;">
+          <div style="height:3px;background:linear-gradient(90deg,#C0644A,#C9A060);position:absolute;top:0;left:0;right:0;"></div>
+          <p style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C0644A;margin:0 0 16px;font-family:Arial,sans-serif;">Your Clarity Report &nbsp;·&nbsp; ClarityBuddy</p>
+          <h1 style="font-size:36px;font-weight:400;margin:0 0 16px;color:#281E1A;line-height:1.1;">${archetype}</h1>
+          <div style="display:flex;align-items:center;gap:12px;max-width:300px;margin-bottom:16px;">
+            <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#8C7570;font-family:Arial,sans-serif;white-space:nowrap;">Clarity Score</span>
+            <div style="flex:1;height:4px;background:rgba(40,30,26,0.1);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:${scorePct}%;background:linear-gradient(90deg,#C0644A,#C9A060);border-radius:2px;"></div>
+            </div>
+            <span style="font-size:22px;color:#C0644A;font-family:Georgia,serif;white-space:nowrap;">${score}</span>
+          </div>
+          <div>${tags}</div>
+        </div>
+
+        <!-- Persona -->
+        ${section('Your Persona', bodyText(teaserText), '#FAF7F2')}
+
+        <!-- Strengths -->
+        ${section('Your Strengths', bodyText(strengthsText), '#F4EDE3')}
+
+        <!-- Blind Spots -->
+        ${section('Your Blind Spots', bodyText(blindspotsText), '#FAF7F2')}
+
+        <!-- Journal Prompts -->
+        ${section('Journal Prompts — Questions to Sit With', promptsHtml, '#F4EDE3')}
+
+        <!-- Next Step -->
+        ${section('Your Next Step', bodyText(nextstepText), '#FAF7F2')}
+
+        <!-- Footer -->
+        <div style="padding:20px 48px;text-align:center;border-top:1px solid rgba(40,30,26,0.1);">
+          <p style="font-size:10px;color:#8C7570;font-family:Arial,sans-serif;margin:0;">
+            Generated by <strong style="color:#C0644A;">ClarityBuddy</strong> &nbsp;·&nbsp; claritybuddy.in &nbsp;·&nbsp; Built on the Relationship Clarity Framework
+          </p>
+        </div>
+
       </div>`;
 
-    document.getElementById('pdf-source').innerHTML = `
-      <div style="font-family:Georgia,serif;color:#281E1A;padding:40px 48px;">
-        <div style="text-align:center;border-bottom:2px solid #C0644A;padding-bottom:24px;margin-bottom:32px;">
-          <p style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C0644A;margin-bottom:10px;font-family:Arial,sans-serif;">ClarityBuddy &mdash; Your Clarity Report</p>
-          <h1 style="font-size:34px;font-weight:400;margin-bottom:12px;color:#281E1A;">${archetype}</h1>
-          <p style="font-size:13px;color:#5A4540;font-family:Arial,sans-serif;">Clarity Score: <strong>${score}</strong></p>
-        </div>
-        ${section('Your Persona', teaser)}
-        ${section('Your Strengths', strengths)}
-        ${section('Your Blind Spots', blindspots)}
-        ${section('Journal Prompts', promptsHtml)}
-        ${section('Your Next Step', nextstep)}
-        <div style="text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid #e0d8d0;font-size:10px;color:#8C7570;font-family:Arial,sans-serif;">
-          Generated by ClarityBuddy &middot; claritybuddy.in
-        </div>
-      </div>`;
+    /* Wait one frame so browser paints the element before canvas capture */
+    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-    const filename = `ClarityBuddy-${archetype.replace(/\s+/g,'-')}-Report.pdf`;
+    const filename = `ClarityBuddy-${archetype.replace(/\s+/g, '-')}-Report.pdf`;
     await window.html2pdf()
       .set({
-        margin: 0,
+        margin:      0,
         filename,
-        image:      { type: 'jpeg', quality: 0.98 },
-        html2canvas:{ scale: 2, useCORS: true, logging: false },
-        jsPDF:      { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        image:       { type: 'jpeg', quality: 0.97 },
+        html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#FAF7F2' },
+        jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
       })
-      .from(document.getElementById('pdf-source'))
+      .from(pdfEl)
       .save();
 
   } catch (err) {
     showError('Could not generate PDF. Please try again.');
   } finally {
+    document.body.removeChild(overlay);
+    if (document.body.contains(pdfEl)) document.body.removeChild(pdfEl);
     if (btn) { btn.textContent = 'Download PDF'; btn.disabled = false; btn.classList.remove('btn--loading'); }
   }
 };
