@@ -957,20 +957,25 @@ function _loadJsPDF() {
 }
 
 async function _embedGoogleFont(doc, family, weight, style) {
+  /* jsPDF only parses TTF — not woff2. Fetch TTF directly from Google Fonts GitHub. */
+  const TTF_URLS = {
+    'Playfair Display:400:normal': 'https://raw.githubusercontent.com/google/fonts/main/ofl/playfairdisplay/static/PlayfairDisplay-Regular.ttf',
+    'Playfair Display:400:italic': 'https://raw.githubusercontent.com/google/fonts/main/ofl/playfairdisplay/static/PlayfairDisplay-Italic.ttf',
+    'Jost:400:normal':             'https://raw.githubusercontent.com/google/fonts/main/ofl/jost/static/Jost-Regular.ttf',
+  };
   try {
-    const ital   = style === 'italic' ? 1 : 0;
-    const cssUrl = `https://fonts.googleapis.com/css2?family=${family.replace(/ /g,'+')}:ital,wght@${ital},${weight}&display=swap`;
-    const css    = await (await fetch(cssUrl)).text();
-    /* grab first woff2 URL from the CSS response */
-    const m = css.match(/url\((https:\/\/fonts\.gstatic\.com[^)]+\.woff2)\)/);
-    if (!m) return false;
-    const buf  = await (await fetch(m[1])).arrayBuffer();
+    const url = TTF_URLS[`${family}:${weight}:${style}`];
+    if (!url) return false;
+    const buf  = await (await fetch(url)).arrayBuffer();
     const b64  = _bufToBase64(buf);
-    const file = `${family.replace(/ /g,'')}-${weight}-${style}.woff2`;
+    const file = `${family.replace(/ /g,'')}-${weight}-${style}.ttf`;
     doc.addFileToVFS(file, b64);
     doc.addFont(file, family, style);
     return true;
-  } catch { return false; }
+  } catch (e) {
+    console.warn(`[PDF] font "${family}" ${style} failed, using fallback:`, e.message || e);
+    return false;
+  }
 }
 
 function _bufToBase64(buf) {
