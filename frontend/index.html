@@ -202,7 +202,7 @@
       display: flex; flex-direction: column; gap: 12px;
     }
     @media(min-width:1024px) {
-      .pricing-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 14px; }
+      .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
     }
 
     /* ── TESTIMONIALS ── */
@@ -268,7 +268,7 @@
   <ul class="nav__links">
     <li><a href="#how-it-works">How It Works</a></li>
     <li><a href="#personas">Personas</a></li>
-    <!-- MVP: pricing hidden <li><a href="#pricing">Pricing</a></li> -->
+    <li><a href="#pricing">Pricing</a></li>
     <li><a href="quiz.html" class="btn btn--primary btn--sm btn--pill">Take Quiz Free</a></li>
   </ul>
   <a href="quiz.html" class="btn btn--primary btn--sm btn--pill" style="display:flex;" id="nav-cta-mobile">Take Quiz Free</a>
@@ -463,12 +463,11 @@
 </section>
 -->
 
-<!-- MVP: Pricing section hidden — enable when subscription plans are live
 <section class="section bg-cream" id="pricing">
   <div class="container">
     <div class="eyebrow">Pricing</div>
     <h2>Take the quiz free.<br>Unlock only <em>if it resonates.</em></h2>
-    <p style="margin-bottom:40px;max-width:400px;">No subscription required to start. Your report diagnosed what the pattern is. The subscription helps you get out of it.</p>
+    <p style="margin-bottom:40px;max-width:400px;">No subscription required. Take the quiz, see your persona and score — then decide if you want the full picture.</p>
     <div class="pricing-grid">
       <div class="price-card">
         <div class="price-card__tier">Free</div>
@@ -476,56 +475,44 @@
         <div class="price-card__period">always free</div>
         <div class="price-card__features">
           <div class="price-card__feature">Full quiz (20 questions)</div>
-          <div class="price-card__feature">Persona revealed</div>
-          <div class="price-card__feature">Clarity score number only</div>
+          <div class="price-card__feature">Your persona revealed</div>
+          <div class="price-card__feature">Clarity score number</div>
         </div>
         <a href="quiz.html" class="btn btn--outline btn--full">Start Free</a>
       </div>
-      <div class="price-card">
-        <div class="price-card__tier">Single Report</div>
-        <div class="price-card__amount"><sup>₹</sup>299</div>
+      <div class="price-card price-card--featured">
+        <div class="price-card__badge">Most Popular</div>
+        <div class="price-card__tier">Self Reflection Report</div>
+        <div class="price-card__amount"><sup>₹</sup>199</div>
         <div class="price-card__period">one-time</div>
         <div class="price-card__features">
           <div class="price-card__feature">Full AI-generated report</div>
-          <div class="price-card__feature">Strengths + blind spots</div>
-          <div class="price-card__feature">Journal prompts</div>
-          <div class="price-card__feature">Your next step</div>
+          <div class="price-card__feature">Your strengths — specifically yours</div>
+          <div class="price-card__feature">Blind spots named clearly</div>
+          <div class="price-card__feature">3 personalised journal prompts</div>
+          <div class="price-card__feature">Your clear next step</div>
         </div>
-        <a href="quiz.html" class="btn btn--outline btn--full">Unlock Report</a>
-      </div>
-      <div class="price-card price-card--featured">
-        <div class="price-card__badge">Most Popular</div>
-        <div class="price-card__tier">Combo Report</div>
-        <div class="price-card__amount"><sup>₹</sup>499</div>
-        <div class="price-card__period">one-time</div>
-        <div class="price-card__features">
-          <div class="price-card__feature">Everything in Single</div>
-          <div class="price-card__feature">Compatibility Check report</div>
-          <div class="price-card__feature">6-dimension breakdown</div>
-          <div class="price-card__feature">Decision framework</div>
-        </div>
-        <a href="quiz.html" class="btn btn--cream btn--full">Get Both Reports</a>
+        <a href="quiz.html" class="btn btn--cream btn--full">Take Quiz →</a>
       </div>
       <div class="price-card">
-        <div class="price-card__tier">Monthly Plan</div>
-        <div class="price-card__amount"><sup>₹</sup>399</div>
-        <div class="price-card__period">per month</div>
+        <div class="price-card__tier">Compatibility Report</div>
+        <div class="price-card__amount"><sup>₹</sup>299</div>
+        <div class="price-card__period">one-time</div>
         <div class="price-card__features">
-          <div class="price-card__feature">Everything in Combo</div>
-          <div class="price-card__feature">AI Clarity Coach — unlimited</div>
-          <div class="price-card__feature">Retake every 90 days</div>
-          <div class="price-card__feature">Before/after score tracking</div>
-          <div class="price-card__feature">Persona-specific weekly email</div>
+          <div class="price-card__feature">Full compatibility analysis</div>
+          <div class="price-card__feature">6-dimension breakdown</div>
+          <div class="price-card__feature">Green flags & risk zones</div>
+          <div class="price-card__feature">Decision framework</div>
+          <div class="price-card__feature">3 personalised journal prompts</div>
         </div>
-        <a href="quiz.html" class="btn btn--primary btn--full">Start My Journey →</a>
+        <a href="compatibility.html" class="btn btn--outline btn--full">Check Compatibility →</a>
       </div>
     </div>
     <p style="font-size:12px;color:var(--ink-soft);margin-top:20px;text-align:center;">
-      Annual plan available — ₹2,999/yr · Secure payments via Razorpay · UPI, Cards, NetBanking
+      Secure payments via Razorpay · UPI, Cards, NetBanking
     </p>
   </div>
 </section>
--->
 
 <!-- ── TESTIMONIALS ── -->
 <section class="section bg-terra">
@@ -569,8 +556,8 @@
     <div class="footer__links">
       <a href="quiz.html">Self Reflection Quiz</a>
       <a href="compatibility.html">Compatibility Check</a>
-      <a href="#personas">The 5 Personas</a>
-      <!-- MVP: <a href="#pricing">Pricing</a> -->
+      <a href="#personas">The 7 Personas</a>
+      <a href="#pricing">Pricing</a>
       <a href="#">Privacy Policy</a>
       <a href="#">Contact</a>
     </div>
