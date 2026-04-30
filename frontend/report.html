@@ -729,124 +729,209 @@ window.downloadReport = async function() {
   const btn = document.getElementById('btn-download');
   if (btn) { btn.textContent = 'Preparing…'; btn.disabled = true; btn.classList.add('btn--loading'); }
 
-  /* Overlay blocks the page while the PDF element is briefly visible for capture */
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(40,30,26,0.82);z-index:9000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;';
-  overlay.innerHTML = `
-    <div style="width:40px;height:40px;border:2px solid rgba(250,247,242,0.3);border-top-color:#C0644A;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
-    <p style="color:#FAF7F2;font-family:Georgia,serif;font-size:15px;">Generating your report…</p>`;
-  document.body.appendChild(overlay);
-
-  /* PDF element rendered at A4 width, z-index just below overlay (invisible to user) */
-  const pdfEl = document.createElement('div');
-  pdfEl.style.cssText = 'position:fixed;left:0;top:0;width:794px;z-index:8999;background:#FAF7F2;';
-  document.body.appendChild(pdfEl);
-
   try {
-    await _loadHtml2Pdf();
+    await _loadJsPDF();
 
-    const archetype  = document.getElementById('archetype-name').textContent;
-    const score      = document.getElementById('score-num').textContent;
-    const quizType   = localStorage.getItem('cb_quiz_type') || 'quiz1';
-    const maxScore   = quizType === 'quiz2' ? 60 : 100;
-    const scorePct   = Math.round((parseInt(score) / maxScore) * 100);
-    const teaserText = document.getElementById('archetype-teaser').innerText;
+    const archetype      = document.getElementById('archetype-name').textContent;
+    const score          = document.getElementById('score-num').textContent;
+    const quizType       = localStorage.getItem('cb_quiz_type') || 'quiz1';
+    const maxScore       = quizType === 'quiz2' ? 60 : 100;
+    const scorePct       = Math.min(parseInt(score) / maxScore, 1);
+    const teaserText     = document.getElementById('archetype-teaser').innerText;
     const strengthsText  = document.getElementById('section-strengths').innerText;
     const blindspotsText = document.getElementById('section-blindspots').innerText;
     const nextstepText   = document.getElementById('section-nextstep').innerText;
     const promptTexts    = Array.from(document.querySelectorAll('#section-prompts .journal-prompt'))
-                              .map(p => p.innerText);
-    const tags = (PERSONAS[archetype]?.tags || [])
-                   .map(t => `<span style="display:inline-block;font-size:10px;font-family:Arial,sans-serif;letter-spacing:0.08em;text-transform:uppercase;padding:4px 10px;border:1px solid rgba(192,100,74,0.35);color:#C0644A;margin:3px;">${t}</span>`)
-                   .join('');
+                              .map(p => p.innerText.trim()).filter(Boolean);
+    const tags           = PERSONAS[archetype]?.tags || [];
 
-    /* ── helpers ── */
-    const label = txt =>
-      `<p style="font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#C0644A;margin:0 0 8px;font-family:Arial,sans-serif;">${txt}</p>`;
-    const bodyText = txt =>
-      txt.split('\n').filter(l => l.trim())
-         .map(l => `<p style="margin:0 0 10px;font-size:13px;line-height:1.85;color:#5A4540;font-family:Georgia,serif;">${l}</p>`)
-         .join('');
-    const section = (lbl, content, bg) => `
-      <div style="padding:24px 48px;${bg ? `background:${bg};` : ''}border-bottom:1px solid rgba(40,30,26,0.1);">
-        ${label(lbl)}${content}
-      </div>`;
+    /* ── jsPDF setup ── */
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
 
-    const promptsHtml = promptTexts.map(p =>
-      `<div style="background:#F4EDE3;border-left:3px solid #C0644A;padding:12px 16px;font-style:italic;margin-bottom:10px;font-size:13px;line-height:1.65;color:#281E1A;font-family:Georgia,serif;">${p}</div>`
-    ).join('');
+    const PW = 210, PH = 297;       /* page dimensions */
+    const ML = 18, MR = 18;         /* left / right margin */
+    const CW = PW - ML - MR;        /* content width */
+    const BOTTOM = PH - 16;         /* safe bottom before footer */
+    let y = 0;
 
-    pdfEl.innerHTML = `
-      <div style="font-family:Georgia,serif;color:#281E1A;background:#FAF7F2;">
+    /* colours */
+    const C = {
+      terra:   [192, 100,  74],
+      gold:    [201, 160,  96],
+      ink:     [ 40,  30,  26],
+      inkMid:  [ 90,  69,  64],
+      inkSoft: [140, 117, 112],
+      cream:   [250, 247, 242],
+      warm:    [244, 237, 227],
+      border:  [220, 210, 205],
+    };
 
-        <!-- Header -->
-        <div style="background:#F4EDE3;padding:40px 48px 32px;border-bottom:1px solid rgba(40,30,26,0.1);position:relative;">
-          <div style="height:3px;background:linear-gradient(90deg,#C0644A,#C9A060);position:absolute;top:0;left:0;right:0;"></div>
-          <p style="font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:#C0644A;margin:0 0 16px;font-family:Arial,sans-serif;">Your Clarity Report &nbsp;·&nbsp; ClarityBuddy</p>
-          <h1 style="font-size:36px;font-weight:400;margin:0 0 16px;color:#281E1A;line-height:1.1;">${archetype}</h1>
-          <div style="display:flex;align-items:center;gap:12px;max-width:300px;margin-bottom:16px;">
-            <span style="font-size:10px;text-transform:uppercase;letter-spacing:0.1em;color:#8C7570;font-family:Arial,sans-serif;white-space:nowrap;">Clarity Score</span>
-            <div style="flex:1;height:4px;background:rgba(40,30,26,0.1);border-radius:2px;overflow:hidden;">
-              <div style="height:100%;width:${scorePct}%;background:linear-gradient(90deg,#C0644A,#C9A060);border-radius:2px;"></div>
-            </div>
-            <span style="font-size:22px;color:#C0644A;font-family:Georgia,serif;white-space:nowrap;">${score}</span>
-          </div>
-          <div>${tags}</div>
-        </div>
+    const setFill   = c => doc.setFillColor(...c);
+    const setDraw   = c => doc.setDrawColor(...c);
+    const setColor  = c => doc.setTextColor(...c);
+    const setFont   = (f, s) => { doc.setFont(f); doc.setFontSize(s); };
 
-        <!-- Persona -->
-        ${section('Your Persona', bodyText(teaserText), '#FAF7F2')}
+    /* ── new page guard ── */
+    const newPageIfNeeded = (need) => {
+      if (y + need > BOTTOM) {
+        _drawFooter();
+        doc.addPage();
+        setFill(C.cream); doc.rect(0, 0, PW, PH, 'F');
+        y = 14;
+      }
+    };
 
-        <!-- Strengths -->
-        ${section('Your Strengths', bodyText(strengthsText), '#F4EDE3')}
+    /* ── footer ── */
+    const _drawFooter = () => {
+      setDraw(C.border); doc.setLineWidth(0.3);
+      doc.line(ML, PH - 12, PW - MR, PH - 12);
+      setFont('helvetica', 7); setColor(C.inkSoft);
+      doc.text('Generated by ClarityBuddy  ·  claritybuddy.in  ·  Relationship Clarity Framework',
+               PW / 2, PH - 7, { align: 'center' });
+    };
 
-        <!-- Blind Spots -->
-        ${section('Your Blind Spots', bodyText(blindspotsText), '#FAF7F2')}
+    /* ── wrap text helper ── */
+    const addText = (text, x, maxW, lineH, paras) => {
+      const lines = doc.splitTextToSize(text, maxW);
+      for (const line of lines) {
+        newPageIfNeeded(lineH + 2);
+        doc.text(line, x, y); y += lineH;
+      }
+      if (paras) y += 3;
+    };
 
-        <!-- Journal Prompts -->
-        ${section('Journal Prompts — Questions to Sit With', promptsHtml, '#F4EDE3')}
+    /* ── section label ── */
+    const sectionLabel = (lbl) => {
+      newPageIfNeeded(12);
+      setFont('helvetica', 7); setColor(C.terra);
+      doc.text(lbl.toUpperCase(), ML, y, { charSpace: 0.8 });
+      y += 6;
+    };
 
-        <!-- Next Step -->
-        ${section('Your Next Step', bodyText(nextstepText), '#FAF7F2')}
+    /* ── divider ── */
+    const divider = () => {
+      setDraw(C.border); doc.setLineWidth(0.3);
+      doc.line(ML, y, PW - MR, y);
+      y += 8;
+    };
 
-        <!-- Footer -->
-        <div style="padding:20px 48px;text-align:center;border-top:1px solid rgba(40,30,26,0.1);">
-          <p style="font-size:10px;color:#8C7570;font-family:Arial,sans-serif;margin:0;">
-            Generated by <strong style="color:#C0644A;">ClarityBuddy</strong> &nbsp;·&nbsp; claritybuddy.in &nbsp;·&nbsp; Built on the Relationship Clarity Framework
-          </p>
-        </div>
+    /* ═══════════════════════════════
+       PAGE 1 — HEADER
+    ═══════════════════════════════ */
+    /* cream background */
+    setFill(C.cream); doc.rect(0, 0, PW, PH, 'F');
 
-      </div>`;
+    /* top accent bar: terra → gold */
+    setFill(C.terra);  doc.rect(0,    0, PW * 0.55, 3, 'F');
+    setFill(C.gold);   doc.rect(PW * 0.55, 0, PW * 0.45, 3, 'F');
 
-    /* Wait one frame so browser paints the element before canvas capture */
-    await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
+    /* warm header band */
+    setFill(C.warm); doc.rect(0, 3, PW, 52, 'F');
 
+    y = 14;
+
+    /* eyebrow */
+    setFont('helvetica', 7); setColor(C.terra);
+    doc.text('YOUR CLARITY REPORT  ·  CLARITYBUDDY', PW / 2, y, { align: 'center', charSpace: 0.8 });
+    y += 11;
+
+    /* persona name */
+    setFont('times', 26); setColor(C.ink);
+    doc.text(archetype, PW / 2, y, { align: 'center' });
+    y += 10;
+
+    /* score row */
+    const barX = ML + 26, barW = CW - 36, barH = 2.5;
+    setFont('helvetica', 7); setColor(C.inkSoft);
+    doc.text('CLARITY SCORE', ML, y - 0.5, { charSpace: 0.5 });
+    /* bar track */
+    setFill(C.border); doc.roundedRect(barX, y - 3, barW, barH, 1, 1, 'F');
+    /* bar fill */
+    setFill(C.terra);  doc.roundedRect(barX, y - 3, barW * scorePct, barH, 1, 1, 'F');
+    /* score number */
+    setFont('times', 16); setColor(C.terra);
+    doc.text(String(score), PW - MR, y, { align: 'right' });
+    y += 9;
+
+    /* tags */
+    if (tags.length) {
+      setFont('helvetica', 7); setColor(C.terra);
+      doc.text(tags.join('  ·  '), PW / 2, y, { align: 'center', charSpace: 0.3 });
+      y += 8;
+    }
+
+    y = 62; /* fixed end of header band */
+
+    /* ═══════════════════════════════
+       CONTENT SECTIONS
+    ═══════════════════════════════ */
+    const sections = [
+      { label: 'Your Persona',     text: teaserText },
+      { label: 'Your Strengths',   text: strengthsText },
+      { label: 'Your Blind Spots', text: blindspotsText },
+    ];
+
+    for (const sec of sections) {
+      if (!sec.text.trim()) continue;
+      divider();
+      sectionLabel(sec.label);
+      setFont('times', 11); setColor(C.inkMid);
+      for (const para of sec.text.split('\n').filter(l => l.trim())) {
+        addText(para, ML, CW, 5.5, true);
+      }
+    }
+
+    /* ── Journal prompts ── */
+    if (promptTexts.length) {
+      divider();
+      sectionLabel('Journal Prompts — Questions to Sit With');
+      for (const prompt of promptTexts) {
+        const lines  = doc.splitTextToSize(prompt, CW - 8);
+        const boxH   = lines.length * 5.5 + 8;
+        newPageIfNeeded(boxH + 4);
+        /* warm box */
+        setFill(C.warm);  doc.rect(ML,     y - 3, CW,  boxH, 'F');
+        /* terra left border */
+        setFill(C.terra); doc.rect(ML,     y - 3, 2.5, boxH, 'F');
+        /* italic text */
+        doc.setFont('times', 'italic'); setFont('times', 11); setColor(C.ink);
+        let ty = y + 2;
+        for (const line of lines) { doc.text(line, ML + 6, ty); ty += 5.5; }
+        y += boxH + 4;
+      }
+    }
+
+    /* ── Next Step ── */
+    if (nextstepText.trim()) {
+      divider();
+      sectionLabel('Your Next Step');
+      setFont('times', 11); setColor(C.inkMid);
+      for (const para of nextstepText.split('\n').filter(l => l.trim())) {
+        addText(para, ML, CW, 5.5, true);
+      }
+    }
+
+    /* footer on last page */
+    _drawFooter();
+
+    /* ── Save ── */
     const filename = `ClarityBuddy-${archetype.replace(/\s+/g, '-')}-Report.pdf`;
-    await window.html2pdf()
-      .set({
-        margin:      0,
-        filename,
-        image:       { type: 'jpeg', quality: 0.97 },
-        html2canvas: { scale: 2, useCORS: true, logging: false, backgroundColor: '#FAF7F2' },
-        jsPDF:       { unit: 'mm', format: 'a4', orientation: 'portrait' },
-      })
-      .from(pdfEl)
-      .save();
+    doc.save(filename);
 
   } catch (err) {
+    console.error('[PDF]', err);
     showError('Could not generate PDF. Please try again.');
   } finally {
-    document.body.removeChild(overlay);
-    if (document.body.contains(pdfEl)) document.body.removeChild(pdfEl);
     if (btn) { btn.textContent = 'Download PDF'; btn.disabled = false; btn.classList.remove('btn--loading'); }
   }
 };
 
-function _loadHtml2Pdf() {
+function _loadJsPDF() {
   return new Promise((resolve, reject) => {
-    if (window.html2pdf) { resolve(); return; }
+    if (window.jspdf) { resolve(); return; }
     const s = document.createElement('script');
-    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js';
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
     s.onload  = resolve;
     s.onerror = () => reject(new Error('Could not load PDF library.'));
     document.head.appendChild(s);
