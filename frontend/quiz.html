@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Self Reflection Quiz — ClarityBuddy</title>
   <script>
-    window.CB_API_URL = 'https://claritybuddy-production.up.railway.app';
+    window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
   </script>
   <meta name="description" content="Take the 20-question Self Reflection Assessment and discover your relationship clarity persona.">
   <link rel="stylesheet" href="css/main.css">
@@ -246,7 +248,9 @@
 ══════════════════════════════════════════════════ */
 
 /* Backend URL — change before deploying */
-window.CB_API_URL = 'https://claritybuddy-production.up.railway.app';
+window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
 
 import ClarityQuiz from './js/quiz.js';
 

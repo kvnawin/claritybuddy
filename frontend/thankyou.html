@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Payment Confirmed — ClarityBuddy</title>  <script>
-    window.CB_API_URL = 'https://claritybuddy-production.up.railway.app';
+    window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
   </script>  <link rel="stylesheet" href="./css/main.css">
   <style>
     body { background: var(--cream); padding-top: 64px; }

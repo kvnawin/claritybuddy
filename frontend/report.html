@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Your Clarity Report — ClarityBuddy</title>
   <script>
-    window.CB_API_URL = 'https://claritybuddy-production.up.railway.app';
+    window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
   </script>
   <link rel="stylesheet" href="css/main.css">
   <style>
@@ -523,7 +525,9 @@
 <div id="pdf-source" style="position:absolute;left:-9999px;top:0;width:210mm;"></div>
 
 <script type="module">
-window.CB_API_URL = 'https://claritybuddy-production.up.railway.app';
+window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
 
 import { getReportPreview, getFullReport } from './js/api.js';
 

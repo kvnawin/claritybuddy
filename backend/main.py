@@ -38,6 +38,9 @@ app = FastAPI(
 )
 
 FRONTEND_URL = os.getenv("FRONTEND_URL", "http://localhost:5500")
+DEV_MODE     = os.getenv("DEV_MODE", "false").lower() == "true"
+if DEV_MODE:
+    logger.warning("⚠️  DEV_MODE is ON — payment check bypassed. Never enable this in production.")
 
 app.add_middleware(
     CORSMiddleware,
@@ -179,7 +182,7 @@ async def get_full_report(report_id: str):
     report = db.get_report(report_id)
     if not report:
         raise HTTPException(status_code=404, detail="Report not found.")
-    if not report.get("paid"):
+    if not DEV_MODE and not report.get("paid"):
         raise HTTPException(status_code=402, detail="Payment required to access full report.")
 
     return FullReport(
