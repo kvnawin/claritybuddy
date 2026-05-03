@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ClarityBuddy — Know Yourself. Choose Wisely.</title>
-  <meta name="description" content="India's only AI-powered relationship clarity assessment. Discover your persona, understand your patterns, and choose your person from clarity — not fear.">
+  <meta name="description" content="India's only AI-powered relationship clarity assessment. Quick 15-min self-reflection or deep 55-question analysis — discover your patterns and choose from clarity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/main.css">
   <style>
 
@@ -52,16 +55,27 @@
     .hero__content { position: relative; z-index: 1; }
     .hero__sub {
       font-size: 14px; line-height: 1.8; color: var(--ink-mid);
-      margin-bottom: 36px; max-width: 380px;
+      margin-bottom: 32px; max-width: 400px;
     }
     .hero__btns {
-      display: flex; flex-direction: column; gap: 12px; margin-bottom: 40px;
+      display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;
     }
-    @media(min-width:640px) {
-      .hero__btns { flex-direction: row; }
-    }
+    @media(min-width:640px) { .hero__btns { flex-direction: row; flex-wrap: wrap; } }
 
-    /* Sample result card */
+    .hero__depth-link {
+      font-size: 12px; color: var(--ink-soft); display: flex; align-items: center; gap: 6px;
+    }
+    .hero__depth-link a { color: var(--terra); text-decoration: none; font-weight: 500; }
+    .hero__depth-link a:hover { text-decoration: underline; }
+
+    /* Hero cards stack */
+    .hero__cards {
+      display: flex; flex-direction: column; gap: 14px;
+      position: relative; z-index: 1;
+    }
+    @media(min-width:1024px) { .hero__cards { max-width: 360px; margin: auto; } }
+
+    /* Sample result card — Quiz 1 */
     .result-card {
       background: #fff;
       border: 1px solid var(--border);
@@ -69,28 +83,55 @@
       box-shadow: var(--shadow-lg);
       position: relative;
       animation: floatCard 6s ease-in-out infinite;
-      z-index: 1;
     }
     .result-card::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 3px;
       background: linear-gradient(90deg, var(--terra), var(--gold));
     }
-    @media(min-width:1024px) {
-      .result-card { max-width: 340px; padding: 32px; margin: auto; }
-    }
     @keyframes floatCard {
       0%,100% { transform: translateY(0); }
-      50%      { transform: translateY(-8px); }
+      50%      { transform: translateY(-6px); }
     }
-    .rc__label { font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra); margin-bottom: 10px; }
-    .rc__name  { font-family: var(--font-serif); font-size: 26px; line-height: 1.2; margin-bottom: 14px; }
-    .rc__score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .rc__label { font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--terra); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .rc__badge { background: var(--terra); color: #fff; font-size: 8px; padding: 2px 7px; letter-spacing: 0.12em; }
+    .rc__name  { font-family: var(--font-serif); font-size: 22px; line-height: 1.2; margin-bottom: 12px; }
+    .rc__score-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
     .rc__bar   { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
     .rc__fill  { height: 100%; width: 72%; background: linear-gradient(90deg,var(--terra),var(--gold)); }
-    .rc__num   { font-family: var(--font-serif); font-size: 22px; color: var(--terra); }
-    .rc__desc  { font-size: 12px; line-height: 1.7; color: var(--ink-soft); }
-    .rc__tags  { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+    .rc__num   { font-family: var(--font-serif); font-size: 20px; color: var(--terra); }
+    .rc__desc  { font-size: 12px; line-height: 1.6; color: var(--ink-soft); }
+    .rc__tags  { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+
+    /* Sample dimension card — Quiz 3 */
+    .dim-card {
+      background: var(--ink);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 20px;
+      position: relative;
+      animation: floatCard 6s ease-in-out infinite;
+      animation-delay: 1.5s;
+    }
+    .dim-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+    }
+    .dc__label { font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .dc__badge { background: var(--terra); color: #fff; font-size: 8px; padding: 2px 7px; letter-spacing: 0.12em; }
+    .dc__score-row { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+    .dc__score-num { font-family: var(--font-serif); font-size: 32px; color: var(--terra); line-height: 1; }
+    .dc__score-sub { font-size: 10px; color: rgba(250,247,242,0.45); line-height: 1.4; }
+    .dc__meta { font-size: 10px; color: rgba(250,247,242,0.45); margin-bottom: 14px; }
+    .dc__dims { display: flex; flex-direction: column; gap: 6px; }
+    .dc__dim { }
+    .dc__dim-header { display: flex; justify-content: space-between; margin-bottom: 2px; }
+    .dc__dim-name  { font-size: 10px; color: rgba(250,247,242,0.55); }
+    .dc__dim-score { font-size: 10px; color: var(--terra); font-family: var(--font-serif); }
+    .dc__dim-bar   { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+    .dc__dim-fill  { height: 100%; background: linear-gradient(90deg, var(--terra), var(--gold)); border-radius: 2px; }
+    .dc__patterns  { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .dc__pattern   { font-size: 9px; color: rgba(250,247,242,0.5); border: 1px solid rgba(255,255,255,0.12); padding: 3px 8px; }
 
     /* ── TRUST STRIP ── */
     .trust-strip {
@@ -101,80 +142,88 @@
       gap: 10px;
     }
     @media(min-width:640px) {
-      .trust-strip {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 6px 24px;
-        padding: 16px 40px;
-        align-items: center;
-      }
+      .trust-strip { flex-direction: row; flex-wrap: wrap; gap: 6px 24px; padding: 16px 40px; align-items: center; }
     }
     @media(min-width:1024px) { .trust-strip { padding: 16px 64px; } }
 
-    .trust-item {
-      display: flex; align-items: center; gap: 8px;
-      font-size: 12px; color: rgba(250,247,242,0.55);
-    }
+    .trust-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(250,247,242,0.55); }
     .trust-item strong { color: rgba(250,247,242,0.9); font-weight: 400; }
     .trust-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--terra); flex-shrink: 0; }
 
     /* ── HOW IT WORKS ── */
-    .steps {
-      display: flex; flex-direction: column; gap: 0;
-    }
-    @media(min-width:1024px) {
-      .steps { display: grid; grid-template-columns: repeat(3,1fr); }
-    }
-    .step {
-      display: flex; gap: 20px;
-      padding: 28px 0; border-bottom: 1px solid var(--border);
-    }
+    .steps { display: flex; flex-direction: column; gap: 0; }
+    @media(min-width:1024px) { .steps { display: grid; grid-template-columns: repeat(3,1fr); } }
+    .step { display: flex; gap: 20px; padding: 28px 0; border-bottom: 1px solid var(--border); }
     .step:first-child { border-top: 1px solid var(--border); }
     @media(min-width:1024px) {
-      .step {
-        flex-direction: column;
-        border-bottom: none;
-        border-right: 1px solid var(--border);
-        padding: 36px 36px 36px 0;
-        gap: 0;
-      }
+      .step { flex-direction: column; border-bottom: none; border-right: 1px solid var(--border); padding: 36px 36px 36px 0; gap: 0; }
       .step:last-child { border-right: none; padding-right: 0; padding-left: 36px; }
       .step:nth-child(2) { padding: 36px; }
     }
-    .step__num {
-      font-family: var(--font-serif);
-      font-size: 36px; font-weight: 400; color: var(--gold-pale); flex-shrink: 0;
-      line-height: 1; width: 44px;
-    }
+    .step__num { font-family: var(--font-serif); font-size: 36px; font-weight: 400; color: var(--gold-pale); flex-shrink: 0; line-height: 1; width: 44px; }
     @media(min-width:1024px) { .step__num { font-size: 44px; margin-bottom: 14px; width: auto; } }
     .step__title { font-family: var(--font-serif); font-size: 19px; margin-bottom: 8px; }
     .step__body  { font-size: 13px; line-height: 1.75; color: var(--ink-soft); }
+    .step__depth-note { display: inline-flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .depth-pill {
+      font-size: 10px; font-weight: 500; letter-spacing: 0.08em; padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .depth-pill--quick { background: rgba(192,100,74,0.12); color: var(--terra); }
+    .depth-pill--deep  { background: rgba(40,30,26,0.1);    color: var(--ink-mid); }
 
     /* ── PERSONAS ── */
-    .arch-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-    }
+    .arch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     @media(min-width:1024px) { .arch-grid { grid-template-columns: repeat(3,1fr); } }
+    .arch-goal { grid-column: 1 / -1; display: flex; gap: 16px; align-items: flex-start; }
 
-    .arch-goal {
-      grid-column: 1 / -1;
-      display: flex; gap: 16px; align-items: flex-start;
+    /* ── DEEP ANALYSIS SHOWCASE ── */
+    .deep-showcase {
+      display: grid; grid-template-columns: 1fr; gap: 40px;
     }
-    @media(min-width:1024px) { .arch-goal { grid-column: 1 / -1; display: flex; } }
+    @media(min-width:1024px) {
+      .deep-showcase { grid-template-columns: 1fr 1fr; align-items: center; gap: 64px; }
+    }
+
+    .showcase-preview {
+      background: var(--ink);
+      padding: 28px;
+      position: relative;
+    }
+    .showcase-preview::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+    }
+    .sp__eyebrow { font-size: 9px; font-weight: 500; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+    .sp__score-row { display: flex; align-items: baseline; gap: 12px; margin-bottom: 4px; }
+    .sp__score    { font-family: var(--font-serif); font-size: 44px; color: var(--terra); line-height: 1; }
+    .sp__score-lbl { font-size: 11px; color: rgba(250,247,242,0.45); }
+    .sp__bar { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-bottom: 6px; overflow: hidden; }
+    .sp__bar-fill { height: 100%; background: linear-gradient(90deg, var(--terra), var(--gold)); border-radius: 2px; }
+    .sp__meta { font-size: 11px; color: rgba(250,247,242,0.4); margin-bottom: 20px; }
+    .sp__dim-label { font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(250,247,242,0.3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .sp__dim-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.08); }
+    .sp__dims { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .sp__dim { }
+    .sp__dim-header { display: flex; justify-content: space-between; margin-bottom: 3px; }
+    .sp__dim-name  { font-size: 11px; color: rgba(250,247,242,0.55); }
+    .sp__dim-val   { font-size: 11px; color: var(--terra); font-family: var(--font-serif); }
+    .sp__dim-bar   { height: 3px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden; }
+    .sp__dim-fill  { height: 100%; border-radius: 2px; }
+    .sp__dim-fill--strong { background: linear-gradient(90deg, var(--terra), var(--gold)); }
+    .sp__dim-fill--risk   { background: linear-gradient(90deg, #8B5E52, #C0644A); }
+    .sp__patterns { display: flex; flex-wrap: wrap; gap: 6px; }
+    .sp__pattern  { font-size: 10px; color: rgba(250,247,242,0.45); border: 1px solid rgba(255,255,255,0.1); padding: 4px 10px; }
 
     /* ── QUIZZES ── */
-    .quiz-grid {
-      display: flex; flex-direction: column; gap: 16px;
-    }
+    .quiz-grid { display: flex; flex-direction: column; gap: 16px; }
     @media(min-width:1024px) {
       .quiz-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
     }
-
     .qcard {
-      background: var(--cream);
-      border: 1px solid var(--border);
-      padding: 28px 24px;
-      position: relative; overflow: hidden;
+      background: var(--cream); border: 1px solid var(--border);
+      padding: 28px 24px; position: relative; overflow: hidden;
       transition: box-shadow var(--transition), transform var(--transition);
     }
     .qcard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
@@ -186,11 +235,15 @@
       font-family: var(--font-serif); font-size: 72px; font-weight: 400; line-height: 1;
       color: var(--gold-pale); position: absolute; right: 16px; top: 10px; pointer-events: none;
     }
-    @media(max-width:639px) {
-      .qcard__num { font-size: 44px; top: 14px; }
-      .qcard__title { max-width: 200px; }
+    @media(max-width:639px) { .qcard__num { font-size: 44px; top: 14px; } .qcard__title { max-width: 200px; } }
+    .qcard__label { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terra); margin-bottom: 6px; }
+    .qcard__depth {
+      display: inline-block; font-size: 9px; font-weight: 500; letter-spacing: 0.12em;
+      text-transform: uppercase; padding: 3px 10px; margin-bottom: 10px;
     }
-    .qcard__label { font-size: 9px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: var(--terra); margin-bottom: 10px; }
+    .qcard__depth--quick { background: rgba(192,100,74,0.1); color: var(--terra); }
+    .qcard__depth--deep  { background: var(--ink); color: var(--gold); }
+    .qcard__depth--partner { background: rgba(143,164,143,0.15); color: #5a7a5a; }
     .qcard__title { font-family: var(--font-serif); font-size: 22px; line-height: 1.25; margin-bottom: 10px; max-width: 260px; }
     .qcard__desc  { font-size: 13px; line-height: 1.75; color: var(--ink-mid); margin-bottom: 22px; }
     .qcard__outs  { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
@@ -198,54 +251,12 @@
     .qcard__out::before { content: '✓'; color: var(--sage); flex-shrink: 0; font-size: 11px; }
 
     /* ── PRICING ── */
-    .pricing-grid {
-      display: flex; flex-direction: column; gap: 12px;
-    }
-    @media(min-width:1024px) {
-      .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-    }
+    .pricing-grid { display: flex; flex-direction: column; gap: 12px; }
+    @media(min-width:1024px) { .pricing-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; } }
 
     /* ── TESTIMONIALS ── */
-    .testi-grid {
-      display: flex; flex-direction: column; gap: 14px;
-    }
-    @media(min-width:1024px) {
-      .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); }
-    }
-
-    /* ── COACH SECTION ── */
-    .coach-chat-demo {
-      background: var(--warm);
-      border: 1px solid var(--border);
-      padding: 24px;
-      margin-top: 32px;
-    }
-    .coach-demo-msg {
-      margin-bottom: 16px; font-size: 13px; line-height: 1.7;
-    }
-    .coach-demo-msg--user {
-      text-align: right; padding-left: 32px;
-    }
-    .coach-demo-msg--user span {
-      background: var(--terra); color: #fff;
-      display: inline-block; padding: 10px 16px;
-      border-radius: 18px 18px 4px 18px;
-    }
-    .coach-demo-msg--coach {
-      padding-right: 32px;
-    }
-    .coach-demo-msg--coach span {
-      background: var(--cream); color: var(--ink);
-      display: inline-block; padding: 12px 16px;
-      border-radius: 4px 18px 18px 18px;
-      border: 1px solid var(--border);
-      font-style: italic; font-family: var(--font-serif); font-size: 14px;
-    }
-    .coach-label {
-      font-size: 9px; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--ink-soft); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;
-    }
-    .coach-label::before { content: ''; width: 20px; height: 1px; background: var(--ink-soft); }
+    .testi-grid { display: flex; flex-direction: column; gap: 14px; }
+    @media(min-width:1024px) { .testi-grid { display: grid; grid-template-columns: repeat(3,1fr); } }
 
     /* ── CTA BAND ── */
     .cta-band {
@@ -255,8 +266,11 @@
     @media(min-width:640px)  { .cta-band { padding: 80px 40px; } }
     @media(min-width:1024px) { .cta-band { padding: 96px 64px; } }
     .cta-band .section-h2 { font-size: clamp(28px,7vw,40px); margin-bottom: 14px; }
-    .cta-band__sub { font-size: 14px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 32px; max-width: 340px; margin-left: auto; margin-right: auto; }
+    .cta-band__sub { font-size: 14px; color: var(--ink-mid); line-height: 1.75; margin-bottom: 32px; max-width: 380px; margin-left: auto; margin-right: auto; }
     .cta-band__note { font-size: 12px; color: var(--ink-soft); margin-top: 10px; }
+    .cta-band__btns { display: flex; flex-direction: column; gap: 12px; align-items: center; }
+    @media(min-width:640px) { .cta-band__btns { flex-direction: row; justify-content: center; } }
+    .cta-band__divider { font-size: 12px; color: var(--ink-soft); }
 
   </style>
 </head>
@@ -282,36 +296,65 @@
   <div class="hero__content animate-fadeup">
     <div class="eyebrow">Relationship Clarity Framework</div>
     <h1>Know yourself.<br>Choose <em>wisely.</em></h1>
-    <p class="hero__sub">India's only AI-powered relationship clarity assessment — get your personal persona and full analysis in 15 minutes.</p>
+    <p class="hero__sub">Two AI-powered assessments — a quick 15-minute self-reflection, or a deep 55-question analysis across 11 psychological dimensions. Both written specifically for you, not a template.</p>
     <div class="hero__btns">
-      <a href="quiz.html" class="btn btn--primary btn--lg">Take the Quiz Free →</a>
-      <a href="#how-it-works" class="btn btn--ghost">See how it works</a>
+      <a href="quiz.html" class="btn btn--primary btn--lg">Quick Quiz — 15 min Free →</a>
+      <a href="quiz3.html" class="btn btn--outline btn--lg">Deep Analysis — 55 Questions →</a>
     </div>
+    <p class="hero__depth-link">
+      Not sure which? <a href="#choose-depth">See the difference →</a>
+    </p>
   </div>
 
-  <!-- Sample result card -->
-  <div class="result-card animate-fadeup delay-3">
-    <div class="rc__label">Your Clarity Report · Sample</div>
-    <div class="rc__name">The Clarity<br>Seeker</div>
-    <div class="rc__score-row">
-      <div class="rc__bar"><div class="rc__fill"></div></div>
-      <div class="rc__num">72</div>
+  <!-- Sample cards: Quick + Deep side by side -->
+  <div class="hero__cards animate-fadeup delay-3">
+
+    <!-- Quiz 1 quick result -->
+    <div class="result-card">
+      <div class="rc__label">Self Reflection Report · Sample <span class="rc__badge">QUICK</span></div>
+      <div class="rc__name">The Deep Thinker</div>
+      <div class="rc__score-row">
+        <div class="rc__bar"><div class="rc__fill"></div></div>
+        <div class="rc__num">72</div>
+      </div>
+      <p class="rc__desc">Your analytical mind is one of your greatest assets — but certainty in love is a feeling, not a fact.</p>
+      <div class="rc__tags">
+        <span class="tag tag--terra">Analytical</span>
+        <span class="tag tag--terra">High Standards</span>
+      </div>
     </div>
-    <p class="rc__desc">Your analytical mind is one of your greatest assets — but it's become the thing slowing you down. You seek certainty before you allow yourself to feel. But certainty in love is a feeling, not a fact.</p>
-    <div class="rc__tags">
-      <span class="tag tag--terra">Analytical</span>
-      <span class="tag tag--terra">High Standards</span>
-      <span class="tag tag--terra">Analysis Paralysis</span>
+
+    <!-- Quiz 3 dimension preview -->
+    <div class="dim-card">
+      <div class="dc__label">Relationship Clarity Report · Sample <span class="dc__badge">DEEP</span></div>
+      <div class="dc__score-row">
+        <div class="dc__score-num">68</div>
+        <div class="dc__score-sub">Overall Clarity<br>Score / 100</div>
+      </div>
+      <div class="dc__meta">Anxious Attachment · Emotionally Hopeful but Cautious</div>
+      <div class="dc__dims">
+        <div class="dc__dim"><div class="dc__dim-header"><span class="dc__dim-name">Identity Clarity</span><span class="dc__dim-score">62</span></div><div class="dc__dim-bar"><div class="dc__dim-fill" style="width:62%"></div></div></div>
+        <div class="dc__dim"><div class="dc__dim-header"><span class="dc__dim-name">Emotional Stability</span><span class="dc__dim-score">55</span></div><div class="dc__dim-bar"><div class="dc__dim-fill" style="width:55%"></div></div></div>
+        <div class="dc__dim"><div class="dc__dim-header"><span class="dc__dim-name">Self-Trust</span><span class="dc__dim-score">52</span></div><div class="dc__dim-bar"><div class="dc__dim-fill" style="width:52%"></div></div></div>
+        <div class="dc__dim"><div class="dc__dim-header"><span class="dc__dim-name">Boundary Strength</span><span class="dc__dim-score">48</span></div><div class="dc__dim-bar"><div class="dc__dim-fill" style="width:48%"></div></div></div>
+        <div class="dc__dim"><div class="dc__dim-header"><span class="dc__dim-name">Marriage Readiness</span><span class="dc__dim-score">60</span></div><div class="dc__dim-bar"><div class="dc__dim-fill" style="width:60%"></div></div></div>
+      </div>
+      <div class="dc__patterns">
+        <div class="dc__pattern">Fear-Driven Attachment</div>
+        <div class="dc__pattern">Hyper-Analysis</div>
+        <div class="dc__pattern">Timeline Pressure</div>
+      </div>
     </div>
+
   </div>
 </section>
 
 <!-- ── TRUST STRIP ── -->
 <div class="trust-strip">
   <div class="trust-item"><div class="trust-dot"></div><span>Based on the <strong>Relationship Clarity Workbook</strong></span></div>
-  <div class="trust-item"><div class="trust-dot"></div><span><strong>15 minutes</strong> to your report</span></div>
-  <div class="trust-item"><div class="trust-dot"></div><span><strong>AI-personalised</strong> — not a generic template</span></div>
-  <div class="trust-item"><div class="trust-dot"></div><span>Built for <strong>Indian women</strong></span></div>
+  <div class="trust-item"><div class="trust-dot"></div><span><strong>Quick:</strong> 15 min · 20 questions</span></div>
+  <div class="trust-item"><div class="trust-dot"></div><span><strong>Deep:</strong> 25 min · 55 questions · 11 dimensions</span></div>
+  <div class="trust-item"><div class="trust-dot"></div><span><strong>AI-personalised</strong> — never a generic template</span></div>
   <div class="trust-item"><div class="trust-dot"></div><span>From <strong>₹199</strong> to unlock</span></div>
 </div>
 
@@ -320,27 +363,31 @@
   <div class="container">
     <div class="eyebrow">The Process</div>
     <h2>From confusion<br>to <em>clarity</em></h2>
-    <p style="margin-bottom:40px;max-width:460px;">No book to finish. No hours of journaling. Three steps, fifteen minutes.</p>
+    <p style="margin-bottom:40px;max-width:460px;">No book to finish. No hours of journaling. Choose your depth, get your report.</p>
     <div class="steps">
       <div class="step">
         <div class="step__num">01</div>
         <div>
-          <div class="step__title">Answer 20 honest questions</div>
-          <p class="step__body">The Self Reflection Quiz covers identity, emotional readiness, love patterns, and relationship values. No right answers — only honest ones.</p>
+          <div class="step__title">Choose your depth and answer honestly</div>
+          <p class="step__body">The Quick Assessment covers identity, emotional readiness, and love patterns in 20 questions. The Deep Analysis goes further — 55 questions across attachment, self-trust, pressure vulnerability, and 8 more dimensions.</p>
+          <div class="step__depth-note">
+            <span class="depth-pill depth-pill--quick">Quick · 20Q · 15 min</span>
+            <span class="depth-pill depth-pill--deep">Deep · 55Q · 25 min</span>
+          </div>
         </div>
       </div>
       <div class="step">
         <div class="step__num">02</div>
         <div>
           <div class="step__title">AI builds your personal report</div>
-          <p class="step__body">Your answers are analysed using the Relationship Clarity Framework. Every report references your specific answers — never a generic template.</p>
+          <p class="step__body">Your answers are analysed through the Relationship Clarity Framework. The Quick Report reveals your persona and blind spots. The Deep Report maps 11 psychological dimensions, your attachment style, and your dominant emotional patterns.</p>
         </div>
       </div>
       <div class="step">
         <div class="step__num">03</div>
         <div>
-          <div class="step__title">Unlock your full clarity analysis</div>
-          <p class="step__body">See your persona, clarity score, blind spots, strengths, and journal prompts. Add the Compatibility Check to evaluate a specific person.</p>
+          <div class="step__title">Unlock the full analysis</div>
+          <p class="step__body">Quick Report: persona, score, strengths, blind spots, journal prompts — ₹199. Deep Report: 11 dimension scorecard + 10 narrative sections + patterns + next step — ₹299. Add the Compatibility Check to evaluate a specific person.</p>
         </div>
       </div>
     </div>
@@ -352,7 +399,7 @@
   <div class="container">
     <div class="eyebrow eyebrow--gold">The 7 Personas</div>
     <h2 style="color:var(--cream);">Which pattern is<br><em>running</em> your love life?</h2>
-    <p style="color:rgba(250,247,242,0.55);margin-bottom:40px;max-width:460px;">Every woman maps to one of seven personas — shaped by her fears, history, and patterns. Yours reveals both your superpower and your blind spot.</p>
+    <p style="color:rgba(250,247,242,0.55);margin-bottom:40px;max-width:460px;">Every woman maps to one of seven personas — shaped by her fears, history, and patterns. The Quick Assessment reveals yours. The Deep Analysis shows exactly why.</p>
     <div class="arch-grid">
       <div class="arch-card">
         <div class="arch-card__icon">🛡</div>
@@ -402,129 +449,199 @@
   </div>
 </section>
 
-<!-- ── THE THREE QUIZZES ── -->
+<!-- ── DEEP ANALYSIS SHOWCASE ── -->
+<section class="section bg-cream" id="choose-depth">
+  <div class="container">
+    <div class="eyebrow">The Deep Analysis</div>
+    <h2>Your persona is just<br>the <em>beginning.</em></h2>
+    <p style="margin-bottom:48px;max-width:480px;">The Relationship Clarity Report goes 3× deeper — measuring the emotional architecture behind your decisions across 11 psychological dimensions.</p>
+    <div class="deep-showcase">
+
+      <!-- Left: dimension preview mock -->
+      <div class="showcase-preview">
+        <div class="sp__eyebrow">Relationship Clarity Report · Sample</div>
+        <div class="sp__score-row">
+          <div class="sp__score">68</div>
+          <div class="sp__score-lbl">Overall Clarity<br>Score / 100</div>
+        </div>
+        <div class="sp__bar" style="margin-bottom:6px;">
+          <div class="sp__bar-fill" style="width:68%"></div>
+        </div>
+        <div class="sp__meta">Anxious Attachment · Emotionally Hopeful but Cautious</div>
+
+        <div class="sp__dim-label">11 Dimensions Scored</div>
+        <div class="sp__dims">
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Identity Clarity</span><span class="sp__dim-val">62/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:62%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Emotional Stability</span><span class="sp__dim-val">55/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:55%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Boundary Strength</span><span class="sp__dim-val">48/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:48%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Pressure Vulnerability</span><span class="sp__dim-val">58/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--risk" style="width:58%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Self-Trust</span><span class="sp__dim-val">52/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:52%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Secure Attachment</span><span class="sp__dim-val">54/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:54%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Red Flag Blindness Risk</span><span class="sp__dim-val">55/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--risk" style="width:55%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Overthinking vs Intuition</span><span class="sp__dim-val">63/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--risk" style="width:63%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">"Good On Paper" Bias</span><span class="sp__dim-val">38/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--risk" style="width:38%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Emotional Availability</span><span class="sp__dim-val">57/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--risk" style="width:57%"></div></div></div>
+          <div class="sp__dim"><div class="sp__dim-header"><span class="sp__dim-name">Marriage Readiness</span><span class="sp__dim-val">60/100</span></div><div class="sp__dim-bar"><div class="sp__dim-fill sp__dim-fill--strong" style="width:60%"></div></div></div>
+        </div>
+
+        <div class="sp__dim-label" style="margin-top:16px;">Dominant Patterns</div>
+        <div class="sp__patterns">
+          <div class="sp__pattern">Fear-Driven Attachment</div>
+          <div class="sp__pattern">Relationship Hyper-Analysis</div>
+          <div class="sp__pattern">Timeline Pressure</div>
+        </div>
+      </div>
+
+      <!-- Right: description -->
+      <div>
+        <div style="display:flex;flex-direction:column;gap:24px;">
+          <div>
+            <div style="font-size:9px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--terra);margin-bottom:8px;">What it measures</div>
+            <p style="font-size:14px;line-height:1.85;color:var(--ink-mid);">The Quick Assessment tells you <em>what</em> your pattern is. The Relationship Clarity Report tells you <em>why</em> — scoring 11 psychological dimensions that shape every relationship decision you make.</p>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:3px;height:40px;background:var(--terra);flex-shrink:0;margin-top:3px;"></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;">Attachment Style</div>
+                <div style="font-size:12px;color:var(--ink-soft);line-height:1.6;">Secure, Anxious, Avoidant, or Fearful-Avoidant — identified from your actual answer patterns, not self-report.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:3px;height:40px;background:var(--terra);flex-shrink:0;margin-top:3px;"></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;">Marriage Readiness Type</div>
+                <div style="font-size:12px;color:var(--ink-soft);line-height:1.6;">Are you choosing from clarity, fear, pressure, or genuine readiness? Named precisely, not softened.</div>
+              </div>
+            </div>
+            <div style="display:flex;gap:14px;align-items:flex-start;">
+              <div style="width:3px;height:40px;background:var(--terra);flex-shrink:0;margin-top:3px;"></div>
+              <div>
+                <div style="font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px;">10-Section Narrative Report</div>
+                <div style="font-size:12px;color:var(--ink-soft);line-height:1.6;">Decision style, emotional patterns, hidden blind spots, growth edge, confusion sources — all written from your answers.</div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;padding:16px;background:var(--warm);border:1px solid var(--border);">
+            <span style="font-family:var(--font-serif);font-size:32px;color:var(--terra);">₹299</span>
+            <span style="font-size:12px;color:var(--ink-soft);">one-time · full 10-section report</span>
+          </div>
+          <a href="quiz3.html" class="btn btn--primary btn--lg" style="text-align:center;">Take the Deep Analysis Free →</a>
+          <p style="font-size:11px;color:var(--ink-soft);">Free to start · Pay only if the scorecard resonates</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── THE THREE ASSESSMENTS ── -->
 <section class="section bg-warm">
   <div class="container">
     <div class="eyebrow">The Assessments</div>
-    <h2>Three quizzes.<br><em>Complete</em> clarity.</h2>
-    <p style="margin-bottom:40px;">Start with yourself. Then go deeper. Then evaluate your person.</p>
+    <h2>Quick read or<br><em>deep diagnosis</em> — you choose.</h2>
+    <p style="margin-bottom:40px;">All three work independently. Most women start with one and come back for the others.</p>
     <div class="quiz-grid">
       <div class="qcard">
         <div class="qcard__num">01</div>
         <div class="qcard__label">Self Reflection Assessment</div>
+        <div class="qcard__depth qcard__depth--quick">Quick · 15 min</div>
         <h3 class="qcard__title">Understand your own patterns first</h3>
-        <p class="qcard__desc">20 questions · 10–12 minutes · Identity, emotional readiness, love patterns, relationship values.</p>
+        <p class="qcard__desc">20 questions · Identity, emotional readiness, love patterns, relationship values.</p>
         <div class="qcard__outs">
-          <div class="qcard__out">Your personal clarity persona</div>
+          <div class="qcard__out">Your personal clarity persona (7 types)</div>
           <div class="qcard__out">Clarity score out of 100</div>
           <div class="qcard__out">Strengths and blind spots</div>
-          <div class="qcard__out">Personalised journal prompts</div>
-          <div class="qcard__out">Your clear next step</div>
+          <div class="qcard__out">3 personalised journal prompts</div>
+          <div class="qcard__out">Your clear next step — ₹199</div>
         </div>
-        <a href="quiz.html" class="btn btn--primary btn--full">Start Self Reflection Quiz Free →</a>
+        <a href="quiz.html" class="btn btn--primary btn--full">Start Free →</a>
       </div>
       <div class="qcard">
         <div class="qcard__num">02</div>
         <div class="qcard__label">Relationship Clarity Report</div>
+        <div class="qcard__depth qcard__depth--deep">Deep Analysis · 25 min</div>
         <h3 class="qcard__title">The deepest self-diagnosis available</h3>
-        <p class="qcard__desc">55 questions · 20–25 minutes · 11 dimensions scored across attachment, self-trust, pressure, and more.</p>
+        <p class="qcard__desc">55 questions · 11 dimensions — attachment, self-trust, pressure vulnerability, red flag blindness, and 7 more.</p>
         <div class="qcard__outs">
           <div class="qcard__out">Overall clarity score + 11 dimension bars</div>
           <div class="qcard__out">Attachment style identified</div>
           <div class="qcard__out">Marriage readiness type</div>
           <div class="qcard__out">Dominant emotional patterns</div>
-          <div class="qcard__out">10-section personalised report</div>
+          <div class="qcard__out">10-section narrative report — ₹299</div>
         </div>
-        <a href="quiz3.html" class="btn btn--primary btn--full">Take the Relationship Clarity Report Free →</a>
+        <a href="quiz3.html" class="btn btn--primary btn--full">Start Free →</a>
       </div>
       <div class="qcard">
         <div class="qcard__num">03</div>
         <div class="qcard__label">Compatibility Check</div>
+        <div class="qcard__depth qcard__depth--partner">Partner Analysis · 10 min</div>
         <h3 class="qcard__title">Is this person right for you — or just familiar?</h3>
-        <p class="qcard__desc">15 questions · 8–10 minutes · 6 compatibility dimensions from the Relationship Clarity Framework.</p>
+        <p class="qcard__desc">15 questions · 6 compatibility dimensions — emotional, values, lifestyle, communication, growth, future vision.</p>
         <div class="qcard__outs">
           <div class="qcard__out">Compatibility score — 6 dimensions</div>
           <div class="qcard__out">Green flags in this relationship</div>
           <div class="qcard__out">Risk zones and honest cautions</div>
           <div class="qcard__out">Move forward or step back?</div>
-          <div class="qcard__out">Clarity-based decision framework</div>
+          <div class="qcard__out">Clarity-based decision framework — ₹299</div>
         </div>
-        <a href="compatibility.html" class="btn btn--primary btn--full">Take the Compatibility Check →</a>
+        <a href="compatibility.html" class="btn btn--primary btn--full">Start Free →</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- MVP: AI Clarity Coach section hidden — enable when subscription is live
-<section class="section bg-cream">
-  <div class="container">
-    <div style="max-width:560px;">
-      <div class="eyebrow">For Subscribers</div>
-      <h2>The report tells you<br><em>what</em> you are.<br>The coach helps you <em>change.</em></h2>
-      <p style="margin-bottom:16px;">The AI Clarity Coach knows your persona, your fears, your patterns from Quiz 1. It responds to your actual situations — not generic relationship advice.</p>
-      <p style="font-size:13px;color:var(--ink-soft);margin-bottom:0;">Every month your life gives you new situations to bring to it. That's what makes the subscription worth it.</p>
-    </div>
-    <div class="coach-chat-demo">
-      <div class="coach-label">Sample conversation · Devoted Giver persona</div>
-      <div class="coach-demo-msg coach-demo-msg--user">
-        <span>He takes 6-8 hours to reply and I don't know if I'm overreacting</span>
-      </div>
-      <div class="coach-demo-msg coach-demo-msg--coach">
-        <span>You're not overreacting — but I want to be honest with you about what's happening here. Your Devoted Giver pattern tends to normalise inconsistency because inconsistency is familiar. The 6-8 hours doesn't bother you as much as the uncertainty of not knowing where you stand.<br><br>Consistency is the biggest green flag. Its absence is information — not a problem to explain away.<br><br>If a friend described this exact situation to you, what would you tell her?</span>
-      </div>
-    </div>
-  </div>
-</section>
--->
-
+<!-- ── PRICING ── -->
 <section class="section bg-cream" id="pricing">
   <div class="container">
     <div class="eyebrow">Pricing</div>
-    <h2>Take the quiz free.<br>Unlock only <em>if it resonates.</em></h2>
-    <p style="margin-bottom:40px;max-width:400px;">No subscription required. Take the quiz, see your persona and score — then decide if you want the full picture.</p>
+    <h2>Free to start.<br>Unlock only <em>if it resonates.</em></h2>
+    <p style="margin-bottom:40px;max-width:440px;">See your score and preview before paying. No account needed. No subscription required.</p>
     <div class="pricing-grid">
       <div class="price-card">
-        <div class="price-card__tier">Free</div>
+        <div class="price-card__tier">Free Preview</div>
         <div class="price-card__amount"><sup>₹</sup>0</div>
-        <div class="price-card__period">always free</div>
+        <div class="price-card__period">always free · both assessments</div>
         <div class="price-card__features">
-          <div class="price-card__feature">Full quiz (20 questions)</div>
-          <div class="price-card__feature">Your persona revealed</div>
-          <div class="price-card__feature">Clarity score number</div>
+          <div class="price-card__feature">Quick: persona + clarity score</div>
+          <div class="price-card__feature">Deep: overall score + 11 dim bars</div>
+          <div class="price-card__feature">Attachment style + readiness type</div>
+          <div class="price-card__feature">Dominant patterns</div>
         </div>
         <a href="quiz.html" class="btn btn--outline btn--full">Start Free</a>
       </div>
       <div class="price-card price-card--featured">
-        <div class="price-card__badge">Most Popular</div>
+        <div class="price-card__badge">Quick · Most Popular</div>
         <div class="price-card__tier">Self Reflection Report</div>
         <div class="price-card__amount"><sup>₹</sup>199</div>
-        <div class="price-card__period">one-time</div>
+        <div class="price-card__period">one-time · 20-question assessment</div>
         <div class="price-card__features">
-          <div class="price-card__feature">Full AI-generated report</div>
+          <div class="price-card__feature">Full AI-generated persona report</div>
           <div class="price-card__feature">Your strengths — specifically yours</div>
           <div class="price-card__feature">Blind spots named clearly</div>
           <div class="price-card__feature">3 personalised journal prompts</div>
           <div class="price-card__feature">Your clear next step</div>
         </div>
-        <a href="quiz.html" class="btn btn--cream btn--full">Take Quiz →</a>
+        <a href="quiz.html" class="btn btn--cream btn--full">Take Quick Quiz →</a>
       </div>
-      <div class="price-card">
+      <div class="price-card price-card--featured" style="border-color:var(--ink);">
+        <div class="price-card__badge" style="background:var(--ink);">Deep Analysis</div>
         <div class="price-card__tier">Relationship Clarity Report</div>
         <div class="price-card__amount"><sup>₹</sup>299</div>
-        <div class="price-card__period">one-time</div>
+        <div class="price-card__period">one-time · 55-question assessment</div>
         <div class="price-card__features">
-          <div class="price-card__feature">55-question deep assessment</div>
-          <div class="price-card__feature">11 dimensions scored</div>
-          <div class="price-card__feature">Attachment style + readiness type</div>
+          <div class="price-card__feature">11 dimensions scored + explained</div>
+          <div class="price-card__feature">Attachment style identified</div>
+          <div class="price-card__feature">Marriage readiness type</div>
           <div class="price-card__feature">10-section personalised report</div>
           <div class="price-card__feature">3 personalised journal prompts</div>
         </div>
-        <a href="quiz3.html" class="btn btn--outline btn--full">Start Clarity Report →</a>
+        <a href="quiz3.html" class="btn btn--primary btn--full">Take Deep Analysis →</a>
       </div>
       <div class="price-card">
         <div class="price-card__tier">Compatibility Report</div>
         <div class="price-card__amount"><sup>₹</sup>299</div>
-        <div class="price-card__period">one-time</div>
+        <div class="price-card__period">one-time · partner assessment</div>
         <div class="price-card__features">
           <div class="price-card__feature">Full compatibility analysis</div>
           <div class="price-card__feature">6-dimension breakdown</div>
@@ -550,17 +667,17 @@
       <div class="testi-card">
         <p class="testi-card__quote">I've been overthinking this relationship for eight months. The report told me in 15 minutes what I already knew but couldn't say out loud.</p>
         <div class="testi-card__author">Priya M., 31 — Bangalore</div>
-        <div class="testi-card__archetype">The Deep Thinker</div>
+        <div class="testi-card__archetype">Self Reflection Report · The Deep Thinker</div>
       </div>
       <div class="testi-card">
-        <p class="testi-card__quote">The Devoted Giver persona described me so accurately I sent it to my best friend. She said — this is literally you. It didn't feel like AI at all.</p>
-        <div class="testi-card__author">Ananya R., 27 — Mumbai</div>
-        <div class="testi-card__archetype">The Devoted Giver</div>
+        <p class="testi-card__quote">The 11 dimensions in the deep analysis hit differently. Seeing my Boundary Strength at 42 and Self-Trust at 48 side by side — I finally understood why I keep ending up in the same situation.</p>
+        <div class="testi-card__author">Shreya V., 29 — Hyderabad</div>
+        <div class="testi-card__archetype">Relationship Clarity Report · Anxious Attachment</div>
       </div>
       <div class="testi-card">
         <p class="testi-card__quote">I was choosing for my family's timeline, not mine. The Dutiful Heart report was a wake-up call I didn't know I needed. Worth every rupee.</p>
         <div class="testi-card__author">Deepa K., 34 — Chennai</div>
-        <div class="testi-card__archetype">The Dutiful Heart</div>
+        <div class="testi-card__archetype">Self Reflection Report · The Dutiful Heart</div>
       </div>
     </div>
   </div>
@@ -569,10 +686,14 @@
 <!-- ── BOTTOM CTA ── -->
 <section class="cta-band">
   <div class="eyebrow" style="justify-content:center;">Start Today</div>
-  <h2 class="section-h2">15 minutes to<br><em>your clarity.</em></h2>
-  <p class="cta-band__sub">Free to start. No account needed. Unlock only if your report resonates.</p>
-  <a href="quiz.html" class="btn btn--primary btn--lg">Take the Quiz Free →</a>
-  <p class="cta-band__note">₹0 to start · Full report from ₹199</p>
+  <h2 class="section-h2">Your clarity is<br><em>15 minutes away.</em></h2>
+  <p class="cta-band__sub">Free to start. No account needed. Choose quick or deep — both are written specifically for you.</p>
+  <div class="cta-band__btns">
+    <a href="quiz.html" class="btn btn--primary btn--lg">Quick Quiz — 15 min →</a>
+    <span class="cta-band__divider">or</span>
+    <a href="quiz3.html" class="btn btn--outline btn--lg">Deep Analysis — 55 Questions →</a>
+  </div>
+  <p class="cta-band__note">Quick from ₹199 · Deep Analysis from ₹299 · Pay only if it resonates</p>
 </section>
 
 <!-- ── FOOTER ── -->
@@ -581,8 +702,8 @@
     <a href="index.html" class="footer__logo">Clarity<em>Buddy</em></a>
     <p class="footer__tagline">Built on the Relationship Clarity Workbook framework. For Indian women who want to choose their person from clarity — not fear, pressure, or loneliness.</p>
     <div class="footer__links">
-      <a href="quiz.html">Self Reflection Quiz</a>
-      <a href="quiz3.html">Relationship Clarity Report</a>
+      <a href="quiz.html">Quick Self Reflection (15 min)</a>
+      <a href="quiz3.html">Deep Analysis (55 Questions)</a>
       <a href="compatibility.html">Compatibility Check</a>
       <a href="#personas">The 7 Personas</a>
       <a href="#pricing">Pricing</a>
@@ -597,13 +718,10 @@
 </footer>
 
 <script>
-  /* Nav scroll effect */
   const nav = document.getElementById('main-nav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 20);
   });
-
-  /* Hide mobile CTA on desktop */
   const mobileCta = document.getElementById('nav-cta-mobile');
   if (window.innerWidth >= 1024) mobileCta.style.display = 'none';
 </script>
