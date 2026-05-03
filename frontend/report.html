@@ -789,16 +789,21 @@ window.downloadReport = async function() {
 
     const setFill   = c => doc.setFillColor(...c);
     const setDraw   = c => doc.setDrawColor(...c);
-    const setColor  = c => doc.setTextColor(...c);
-    const setFont   = (f, s, st = 'normal') => { doc.setFont(f, st); doc.setFontSize(s); };
+    let _curFont  = [SERIF, 11, 'normal'];
+    let _curColor = [40, 30, 26];
+    const setColor  = c => { _curColor = c; doc.setTextColor(...c); };
+    const setFont   = (f, s, st = 'normal') => { _curFont = [f, s, st]; doc.setFont(f, st); doc.setFontSize(s); };
 
     /* ── new page guard ── */
     const newPageIfNeeded = (need) => {
       if (y + need > BOTTOM) {
+        const sf = [..._curFont], sc = [..._curColor];
         _drawFooter();
         doc.addPage();
         setFill(C.cream); doc.rect(0, 0, PW, PH, 'F');
         y = 14;
+        setFont(sf[0], sf[1], sf[2]);
+        setColor(sc);
       }
     };
 
