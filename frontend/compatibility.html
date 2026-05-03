@@ -106,14 +106,6 @@ window.CB_API_URL = (window.location.hostname === 'localhost' || window.location
 import ClarityQuiz from './js/quiz.js';
 
 const QUESTIONS = [
-  /* ── Email capture first ── */
-  {
-    id: 'email', section: 'Compatibility Check',
-    type: 'email',
-    text: 'Who is this compatibility report for?',
-    subtitle: 'We\'ll personalise the report to your specific relationship. Your details are kept private.',
-  },
-
   /* ── Dimension 1: Emotional Compatibility ── */
   {
     id: 'eq1', section: 'Emotional Compatibility',
@@ -269,6 +261,14 @@ const QUESTIONS = [
       { value: 'c', label: 'Anxious or uncertain more often than not' },
       { value: 'd', label: 'Like I\'m working too hard for too little' },
     ],
+  },
+
+  /* ── Email capture after all questions ── */
+  {
+    id: 'email', section: 'Almost There',
+    type: 'email',
+    text: 'Who is this compatibility report for?',
+    subtitle: 'You\'ve answered all 13 questions. Your personalised compatibility report will be ready in under a minute — enter your details to receive it.',
   },
 ];
 

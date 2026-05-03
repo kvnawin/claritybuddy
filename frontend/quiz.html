@@ -244,7 +244,7 @@
 <script type="module">
 /* ══════════════════════════════════════════════════
    QUIZ 1 — All 20 Questions + Email capture
-   Email capture is inserted before last section (Q16)
+   Email capture is inserted after all 20 questions
 ══════════════════════════════════════════════════ */
 
 /* Backend URL — change before deploying */
@@ -427,14 +427,6 @@ const QUESTIONS = [
     ],
   },
 
-  /* ── Email Capture (before Section D) ── */
-  {
-    id: 'email', section: 'Almost There',
-    type: 'email',
-    text: 'Where should we send your clarity report?',
-    subtitle: 'You\'ve answered 15 questions. Your personalised report will be ready in under a minute — enter your details to receive it.',
-  },
-
   /* ── Section D: Relationship Structure ── */
   {
     id: 'q16', section: 'Section D — Relationship Structure',
@@ -490,6 +482,14 @@ const QUESTIONS = [
       { value: 'c', label: 'Vague — I avoid thinking too far ahead' },
       { value: 'd', label: 'Pressured — I focus on timeline more than vision' },
     ],
+  },
+
+  /* ── Email Capture (after all 20 questions) ── */
+  {
+    id: 'email', section: 'Almost There',
+    type: 'email',
+    text: 'Where should we send your clarity report?',
+    subtitle: 'You\'ve answered all 20 questions. Your personalised report will be ready in under a minute — enter your details to receive it.',
   },
 ];
 

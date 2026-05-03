@@ -426,7 +426,7 @@
         </div>
         <div class="paywall__overlay">
           <p style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">Your full report is ready</p>
-          <button class="btn btn--primary btn--full" id="btn-scroll-unlock" onclick="scrollToUnlock()">Unlock Full Report ₹199 →</button>
+          <button class="btn btn--primary btn--full" id="btn-scroll-unlock" onclick="scrollToUnlock()">Unlock Full Report ₹99 →</button>
         </div>
       </div>
 
@@ -446,14 +446,14 @@
 
         <!-- Plan tabs -->
         <div class="plan-tabs">
-          <button class="plan-tab active" data-plan="quiz1" onclick="selectPlan(this,'quiz1')" id="plan-tab-main">Report ₹199</button>
+          <button class="plan-tab active" data-plan="quiz1" onclick="selectPlan(this,'quiz1')" id="plan-tab-main">Report ₹99</button>
           <!-- MVP: combo hidden until Quiz 2 post-payment flow is built
           <button class="plan-tab" data-plan="combo" onclick="selectPlan(this,'combo')">Combo ₹499</button>
           -->
           <!-- MVP: subscription hidden <button class="plan-tab" data-plan="monthly" onclick="selectPlan(this,'monthly')">Monthly ₹399</button> -->
         </div>
 
-        <div class="unlock-card__price"><sup>₹</sup><span id="plan-price">199</span></div>
+        <div class="unlock-card__price"><sup>₹</sup><span id="plan-price">99</span></div>
         <p class="unlock-card__price-note" id="plan-note">One-time · Full report for this quiz</p>
 
         <button id="btn-unlock" class="btn btn--cream btn--full btn--lg" onclick="handleUnlock()">
@@ -698,7 +698,7 @@ function renderPrompts(prompts) {
 }
 
 /* ── Plan selection ── */
-const PRICE_DISPLAY = { quiz1: '199', quiz2: '299', single: '199', combo: '499', monthly: '399', annual: '2,999' };
+const PRICE_DISPLAY = { quiz1: '99', quiz2: '299', single: '99', combo: '499', monthly: '399', annual: '2,999' };
 const PLAN_NOTES    = {
   quiz1:   'One-time · Full Self Reflection Report',
   quiz2:   'One-time · Full Compatibility Report',

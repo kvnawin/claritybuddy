@@ -267,13 +267,6 @@ export const Q3_QUESTIONS = [
     w:{a:{selfTrust:3,intuitionTrust:3,identityClarity:2},b:{selfTrust:2,identityClarity:1},c:{selfTrust:-1,pressureVulnerability:1},d:{selfTrust:-3,anxiousAttachment:2,emotionalStability:-2}}
   },
 
-  /* ── Email capture after Q25 ── */
-  { id:'email', section:'Almost There',
-    type:'email',
-    text:'Where should we send your Relationship Clarity Report?',
-    subtitle:'You\'ve answered 25 questions. Your full personalised report will be ready in about 90 seconds — enter your details to receive it.',
-  },
-
   /* ── Section 6: Attachment Style (Q26–Q30) ── */
   { id:'q26', section:'Attachment Style',
     text:'When someone becomes emotionally distant, your instinct is usually to:',
@@ -584,6 +577,13 @@ export const Q3_QUESTIONS = [
       {value:'d',label:'Emotionally exhausted'},
     ],
     w:{a:{marriageReadiness:3,emotionalStability:2,identityClarity:2},b:{marriageReadiness:2,emotionalStability:1},c:{pressureVulnerability:3,emotionalStability:-2,marriageReadiness:-2},d:{emotionalStability:-3,marriageReadiness:-2,anxiousAttachment:1}}
+  },
+
+  /* ── Email capture after all 55 questions ── */
+  { id:'email', section:'Almost There',
+    type:'email',
+    text:'Where should we send your Relationship Clarity Report?',
+    subtitle:'You\'ve answered all 55 questions. Your full personalised report will be ready in about 90 seconds — enter your details to receive it.',
   },
 ];
 

@@ -8,10 +8,10 @@ import { createPaymentOrder, verifyPayment } from './api.js';
 
 /* Plans config — matches backend pricing */
 export const PLANS = {
-  quiz1:   { label: 'Self Reflection Report',      price: 19900,  desc: 'Full AI report — Quiz 1' },
+  quiz1:   { label: 'Self Reflection Report',      price: 9900,   desc: 'Full AI report — Quiz 1' },
   quiz2:   { label: 'Compatibility Report',        price: 29900,  desc: 'Full AI report — Quiz 2' },
   quiz3:   { label: 'Relationship Clarity Report', price: 29900,  desc: 'Full 10-section Relationship Clarity Report' },
-  single:  { label: 'Single Report',               price: 19900,  desc: 'Full AI report for this quiz' },
+  single:  { label: 'Single Report',               price: 9900,   desc: 'Full AI report for this quiz' },
   combo:   { label: 'Combo Report',                price: 49900,  desc: 'Both Quiz 1 + Quiz 2 reports' },
   monthly: { label: 'Monthly Plan',                price: 39900,  desc: 'Unlimited coach + retake every 90 days' },
   annual:  { label: 'Annual Plan',                 price: 299900, desc: 'Full year — clarity as a practice' },
