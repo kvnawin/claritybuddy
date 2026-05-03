@@ -346,7 +346,7 @@ All core files are implemented and deployed.
 
 - [x] `frontend/css/main.css` — design tokens + all component styles
 - [x] `frontend/quiz.html` — Quiz 1, all 20 questions, one-at-a-time UX
-- [x] `frontend/report.html` — preview + paywall + full reveal
+- [x] `frontend/report.html` — preview + paywall + full reveal + PDF download
 - [x] `frontend/index.html` — landing page
 - [x] `frontend/compatibility.html` — Quiz 2
 - [x] `frontend/thankyou.html` — post-payment page
@@ -375,6 +375,7 @@ All core files are implemented and deployed.
 - Every backend route returns JSON. HTTP status codes must be correct.
 - CORS: backend allows `FRONTEND_URL` env var + localhost ports + `*.vercel.app` regex.
 - OpenAI client is module-level singleton with 50s timeout.
+- PDF generation (`downloadReport` in `report.html`) uses jsPDF 2.5.1 loaded lazily from cdnjs. Custom TTF fonts (Playfair Display, Jost) are fetched from Google Fonts GitHub at download time — failures fall back to built-in Times/Helvetica. All text must be passed through `_pdfText()` before reaching jsPDF to sanitise Unicode characters (em-dashes, smart quotes, bullets, etc.) that jsPDF standard fonts cannot encode.
 
 ---
 
@@ -399,4 +400,4 @@ uvicorn main:app --reload --port 8000
 
 ---
 
-*Last updated: 2026-04-28. Update this file whenever a decision changes or a file is completed.*
+*Last updated: 2026-05-03. Update this file whenever a decision changes or a file is completed.*
