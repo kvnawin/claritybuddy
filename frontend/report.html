@@ -736,13 +736,14 @@ window.downloadReport = async function() {
     const score          = document.getElementById('score-num').textContent;
     const quizType       = localStorage.getItem('cb_quiz_type') || 'quiz1';
     const maxScore       = quizType === 'quiz2' ? 60 : 100;
-    const scorePct       = Math.min(parseInt(score) / maxScore, 1);
-    const teaserText     = document.getElementById('archetype-teaser').innerText;
-    const strengthsText  = document.getElementById('section-strengths').innerText;
-    const blindspotsText = document.getElementById('section-blindspots').innerText;
-    const nextstepText   = document.getElementById('section-nextstep').innerText;
+    const scoreNum       = parseFloat(score);
+    const scorePct       = isNaN(scoreNum) ? 0 : Math.min(scoreNum / maxScore, 1);
+    const teaserText     = _pdfText(document.getElementById('archetype-teaser').innerText);
+    const strengthsText  = _pdfText(document.getElementById('section-strengths').innerText);
+    const blindspotsText = _pdfText(document.getElementById('section-blindspots').innerText);
+    const nextstepText   = _pdfText(document.getElementById('section-nextstep').innerText);
     const promptTexts    = Array.from(document.querySelectorAll('#section-prompts .journal-prompt'))
-                              .map(p => p.innerText.trim()).filter(Boolean);
+                              .map(p => _pdfText(p.innerText.trim())).filter(Boolean);
     const tags           = PERSONAS[archetype]?.tags || [];
 
     /* ── jsPDF setup ── */
@@ -864,7 +865,7 @@ window.downloadReport = async function() {
 
     /* score number centred under bar */
     setFont(SERIF, 13); setColor(C.terra);
-    doc.text(`${score} / ${maxScore}`, PW / 2, y, { align: 'center' });
+    doc.text(`${isNaN(scoreNum) ? score : scoreNum} / ${maxScore}`, PW / 2, y, { align: 'center' });
     y += 9;
 
     /* tags */
@@ -945,6 +946,20 @@ window.downloadReport = async function() {
   }
 };
 
+/* Replace Unicode chars that jsPDF standard fonts can't encode (em-dash, smart quotes, etc.) */
+function _pdfText(text) {
+  if (!text) return '';
+  return text
+    .replace(/[‘’ʼ]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/—/g, '--')
+    .replace(/–/g, '-')
+    .replace(/•/g, '*')
+    .replace(/…/g, '...')
+    .replace(/ /g, ' ')
+    .replace(/[^\x00-\xFF]/g, '?');
+}
+
 function _loadJsPDF() {
   return new Promise((resolve, reject) => {
     if (window.jspdf) { resolve(); return; }
@@ -966,7 +981,9 @@ async function _embedGoogleFont(doc, family, weight, style) {
   try {
     const url = TTF_URLS[`${family}:${weight}:${style}`];
     if (!url) return false;
-    const buf  = await (await fetch(url)).arrayBuffer();
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const buf  = await res.arrayBuffer();
     const b64  = _bufToBase64(buf);
     const file = `${family.replace(/ /g,'')}-${weight}-${style}.ttf`;
     doc.addFileToVFS(file, b64);
