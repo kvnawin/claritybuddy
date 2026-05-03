@@ -85,6 +85,9 @@ async function _onPaymentSuccess(response, reportId) {
 
     /* store payment id */
     localStorage.setItem('cb_payment_id', response.razorpay_payment_id);
+    const _plan = localStorage.getItem('cb_quiz_type') || 'quiz1';
+    const _amt  = { quiz1: 99, quiz2: 299, quiz3: 299 }[_plan] || 99;
+    if (window.fbq) fbq('track', 'Purchase', { value: _amt, currency: 'INR' });
 
     /* redirect to full report — quiz3 has its own page */
     const quizType = localStorage.getItem('cb_quiz_type') || 'quiz1';

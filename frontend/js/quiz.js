@@ -243,6 +243,7 @@ class ClarityQuiz {
       }
 
       console.log('[Quiz] Submission successful:', result);
+      if (window.fbq) fbq('track', 'Lead');
       localStorage.setItem('cb_report_id',  result.report_id);
       localStorage.setItem('cb_quiz_type',  this.quizType);
       if (this.quizType === 'quiz3') {
