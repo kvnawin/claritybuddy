@@ -56,7 +56,7 @@ class FullReport(BaseModel):
 
 # ── Payment ──────────────────────────────────────────
 
-PlanType = Literal['quiz1', 'quiz2', 'single', 'combo', 'monthly', 'annual']
+PlanType = Literal['quiz1', 'quiz2', 'quiz3', 'single', 'combo', 'monthly', 'annual']
 
 class CreatePaymentPayload(BaseModel):
     report_id: str
@@ -79,6 +79,47 @@ class VerifyPaymentPayload(BaseModel):
 
 class VerifyPaymentResponse(BaseModel):
     success: bool
+
+
+# ── Quiz 3 ───────────────────────────────────────────
+
+class Quiz3Payload(BaseModel):
+    name:    str = Field(..., min_length=1, max_length=100)
+    email:   EmailStr
+    answers: Dict[str, str]
+    scores:  Dict[str, int]
+    derived: Dict[str, Any]
+
+
+class Quiz3Response(BaseModel):
+    report_id:               str
+    overall_score:           int
+    attachment_style:        str
+    marriage_readiness_type: str
+    dominant_patterns:       List[str]
+
+
+class Report3Preview(BaseModel):
+    report_id:               str
+    overall_score:           int
+    attachment_style:        str
+    marriage_readiness_type: str
+    dominant_patterns:       List[str]
+    scores:                  Dict[str, int]
+    paid:                    bool
+
+
+class Report3Full(BaseModel):
+    report_id:               str
+    overall_score:           int
+    attachment_style:        str
+    marriage_readiness_type: str
+    dominant_patterns:       List[str]
+    scores:                  Dict[str, int]
+    sections:                Dict[str, str]
+    journal_prompts:         List[str]
+    next_step:               str
+    paid:                    bool
 
 
 # ── Coach ────────────────────────────────────────────

@@ -12,6 +12,7 @@ import razorpay
 PLAN_PRICES = {
     "quiz1":   19900,   # ₹199 — Self Reflection report
     "quiz2":   29900,   # ₹299 — Compatibility report
+    "quiz3":   29900,   # ₹299 — Relationship Clarity report
     "single":  19900,   # legacy fallback
     "combo":   49900,
     "monthly": 39900,

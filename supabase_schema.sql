@@ -6,7 +6,7 @@ create table if not exists reports (
   id               uuid primary key default gen_random_uuid(),
   email            text not null,
   name             text,
-  quiz_type        text not null check (quiz_type in ('quiz1', 'quiz2')),
+  quiz_type        text not null check (quiz_type in ('quiz1', 'quiz2', 'quiz3')),
   answers          jsonb not null default '{}',
   partner_name     text,
 

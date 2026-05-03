@@ -8,12 +8,13 @@ import { createPaymentOrder, verifyPayment } from './api.js';
 
 /* Plans config — matches backend pricing */
 export const PLANS = {
-  quiz1:   { label: 'Self Reflection Report', price: 19900,  desc: 'Full AI report — Quiz 1' },
-  quiz2:   { label: 'Compatibility Report',   price: 29900,  desc: 'Full AI report — Quiz 2' },
-  single:  { label: 'Single Report',          price: 19900,  desc: 'Full AI report for this quiz' },
-  combo:   { label: 'Combo Report',           price: 49900,  desc: 'Both Quiz 1 + Quiz 2 reports' },
-  monthly: { label: 'Monthly Plan',           price: 39900,  desc: 'Unlimited coach + retake every 90 days' },
-  annual:  { label: 'Annual Plan',            price: 299900, desc: 'Full year — clarity as a practice' },
+  quiz1:   { label: 'Self Reflection Report',      price: 19900,  desc: 'Full AI report — Quiz 1' },
+  quiz2:   { label: 'Compatibility Report',        price: 29900,  desc: 'Full AI report — Quiz 2' },
+  quiz3:   { label: 'Relationship Clarity Report', price: 29900,  desc: 'Full 10-section Relationship Clarity Report' },
+  single:  { label: 'Single Report',               price: 19900,  desc: 'Full AI report for this quiz' },
+  combo:   { label: 'Combo Report',                price: 49900,  desc: 'Both Quiz 1 + Quiz 2 reports' },
+  monthly: { label: 'Monthly Plan',                price: 39900,  desc: 'Unlimited coach + retake every 90 days' },
+  annual:  { label: 'Annual Plan',                 price: 299900, desc: 'Full year — clarity as a practice' },
 };
 
 /* ─────────────────────────────────────────
@@ -85,8 +86,10 @@ async function _onPaymentSuccess(response, reportId) {
     /* store payment id */
     localStorage.setItem('cb_payment_id', response.razorpay_payment_id);
 
-    /* redirect to full report */
-    window.location.href = `report.html?id=${reportId}&unlocked=1`;
+    /* redirect to full report — quiz3 has its own page */
+    const quizType = localStorage.getItem('cb_quiz_type') || 'quiz1';
+    const page = quizType === 'quiz3' ? 'report3.html' : 'report.html';
+    window.location.href = `${page}?id=${reportId}&unlocked=1`;
   } catch (err) {
     _showError('Payment was received but we had trouble confirming it. Please contact support.');
   }

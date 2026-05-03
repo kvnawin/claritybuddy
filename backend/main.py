@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 from models import (
     Quiz1Payload, Quiz2Payload, QuizResponse,
     ReportPreview, FullReport,
+    Quiz3Payload, Quiz3Response, Report3Preview, Report3Full,
     CreatePaymentPayload, CreatePaymentResponse,
     VerifyPaymentPayload, VerifyPaymentResponse,
     CoachChatPayload, CoachChatResponse,
@@ -198,6 +199,96 @@ async def get_full_report(report_id: str):
         green_flags=report.get("green_flags"),
         risk_zones=report.get("risk_zones"),
         decision=report.get("decision"),
+    )
+
+
+@app.post("/api/submit-quiz3", response_model=Quiz3Response)
+async def submit_quiz3(payload: Quiz3Payload):
+    """
+    Receive Quiz 3 answers + pre-computed scores → call GPT → save → return preview data.
+    Scores are computed client-side; GPT generates narrative interpretation only.
+    """
+    logger.info(f"[API] POST /api/submit-quiz3 from {payload.email}")
+
+    report_id = db.create_report(
+        email=payload.email,
+        name=payload.name,
+        quiz_type="quiz3",
+        answers=payload.answers,
+    )
+
+    try:
+        result = await ai.generate_quiz3_report(
+            name=payload.name,
+            scores=payload.scores,
+            derived=payload.derived,
+        )
+
+        db.save_report_result(
+            report_id=report_id,
+            archetype=result["dominant_pattern"],
+            score=result["overall_score"],
+            full_report_raw=result["raw_text"],
+            parsed=result,
+        )
+
+        return Quiz3Response(
+            report_id=report_id,
+            overall_score=result["overall_score"],
+            attachment_style=result["attachment_style"],
+            marriage_readiness_type=result["marriage_readiness_type"],
+            dominant_patterns=result["dominant_patterns"],
+        )
+
+    except Exception as e:
+        logger.error(f"Quiz 3 generation failed: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail="Report generation failed. Please try again.")
+
+
+@app.get("/api/report3/{report_id}", response_model=Report3Preview)
+async def get_report3_preview(report_id: str):
+    """Return quiz3 scores + labels (always free). Also returns paid status."""
+    report = db.get_report(report_id)
+    if not report or report.get("quiz_type") != "quiz3":
+        raise HTTPException(status_code=404, detail="Report not found.")
+
+    dims = report.get("dimensions") or {}
+    return Report3Preview(
+        report_id=report["id"],
+        overall_score=dims.get("overallScore", report.get("score", 0)),
+        attachment_style=dims.get("attachmentStyle", ""),
+        marriage_readiness_type=dims.get("marriageReadinessType", ""),
+        dominant_patterns=dims.get("dominantPatterns", []),
+        scores=dims.get("scores", {}),
+        paid=report.get("paid", False),
+    )
+
+
+@app.get("/api/report3/{report_id}/full", response_model=Report3Full)
+async def get_report3_full(report_id: str):
+    """Return full quiz3 report. Requires paid=true in DB."""
+    report = db.get_report(report_id)
+    if not report or report.get("quiz_type") != "quiz3":
+        raise HTTPException(status_code=404, detail="Report not found.")
+    if not DEV_MODE and not report.get("paid"):
+        raise HTTPException(status_code=402, detail="Payment required to access full report.")
+
+    dims = report.get("dimensions") or {}
+    sections = dims.get("sections", {})
+    sections["strongestPatterns"] = report.get("strengths", "")
+    sections["hiddenBlindSpots"]  = report.get("blind_spots", "")
+
+    return Report3Full(
+        report_id=report["id"],
+        overall_score=dims.get("overallScore", report.get("score", 0)),
+        attachment_style=dims.get("attachmentStyle", ""),
+        marriage_readiness_type=dims.get("marriageReadinessType", ""),
+        dominant_patterns=dims.get("dominantPatterns", []),
+        scores=dims.get("scores", {}),
+        sections=sections,
+        journal_prompts=report.get("journal_prompts", []),
+        next_step=report.get("next_step", ""),
+        paid=report.get("paid", False),
     )
 
 

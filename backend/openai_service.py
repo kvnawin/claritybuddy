@@ -298,6 +298,197 @@ def _parse_quiz2_report(raw: str) -> Dict[str, Any]:
     }
 
 
+# ── Quiz 3: Generate Relationship Clarity Report ────────────
+
+_CONTRADICTION_LABELS = {
+    'desires_safety_but_attracted_inconsistency': 'Consciously desires emotional safety but may still feel emotionally drawn to inconsistency and unpredictability',
+    'low_trust_high_overthinking':               'Tends to over-analyse excessively when her intuition has already signalled a concern',
+    'pressure_driven_not_ready':                 'Part of the urgency around relationships appears to come from external pressure rather than genuine emotional readiness',
+    'knows_values_cant_enforce_boundaries':      'Intellectually clear on what she values but struggles to enforce those boundaries when emotionally attached',
+    'blind_spots_with_self_trust':               'Shows self-trust in general but has notable blind spots when emotionally attracted to someone',
+    'avoidant_but_wants_commitment':             'Consciously desires commitment but emotionally distances herself as intimacy deepens',
+}
+
+_SCORE_LABELS = {
+    (80, 100): 'Strong',
+    (60,  79): 'Moderate',
+    (40,  59): 'Developing',
+    ( 0,  39): 'Low',
+}
+
+def _score_label(s: int) -> str:
+    for (lo, hi), label in _SCORE_LABELS.items():
+        if lo <= s <= hi:
+            return label
+    return 'Moderate'
+
+_RISK_LABELS = {
+    (70, 100): 'High Risk',
+    (40,  69): 'Moderate',
+    ( 0,  39): 'Low Risk',
+}
+
+def _risk_label(s: int) -> str:
+    for (lo, hi), label in _RISK_LABELS.items():
+        if lo <= s <= hi:
+            return label
+    return 'Moderate'
+
+
+async def generate_quiz3_report(
+    name:    str,
+    scores:  Dict[str, Any],
+    derived: Dict[str, Any],
+) -> Dict[str, Any]:
+    logger.info(f"[OpenAI] Generating Quiz3 report for {name}")
+    system_prompt = _load_prompt("quiz3_system.txt")
+    user_message  = _build_quiz3_user_message(name, scores, derived)
+
+    response = await _client.chat.completions.create(
+        model=MODEL,
+        max_tokens=2200,
+        temperature=0.75,
+        messages=[
+            {"role": "system", "content": system_prompt},
+            {"role": "user",   "content": user_message},
+        ],
+    )
+
+    raw_text = response.choices[0].message.content.strip()
+    logger.info(f"[OpenAI] Quiz3 response: {len(raw_text)} chars")
+    return _parse_quiz3_report(raw_text, derived, scores)
+
+
+def _build_quiz3_user_message(name: str, scores: Dict[str, Any], derived: Dict[str, Any]) -> str:
+    s = scores
+    overall = derived.get('overallScore', 0)
+    attachment = derived.get('attachmentStyle', '')
+    mrt = derived.get('marriageReadinessType', '')
+    patterns = derived.get('dominantPatterns', [])
+    contradictions = derived.get('contradictions', [])
+
+    lines = [
+        f"Name: {name}",
+        "",
+        f"OVERALL CLARITY SCORE: {overall}/100",
+        "",
+        "━━━ DIMENSION SCORES ━━━",
+        "",
+        f"Identity Clarity: {s.get('identityClarity',0)}/100 — {_score_label(s.get('identityClarity',0))} self-awareness and value clarity",
+        f"Emotional Stability: {s.get('emotionalStability',0)}/100 — {_score_label(s.get('emotionalStability',0))} emotional regulation and grounding",
+        f"Boundary Strength: {s.get('boundaryStrength',0)}/100 — {_score_label(s.get('boundaryStrength',0))} boundary enforcement and self-respect",
+        f"Pressure Vulnerability: {s.get('pressureVulnerability',0)}/100 — {_risk_label(s.get('pressureVulnerability',0))} influence from external/timeline pressure",
+        f"Self-Trust: {s.get('selfTrust',0)}/100 — {_score_label(s.get('selfTrust',0))} trust in own intuition and judgement",
+        f"Secure Attachment Tendency: {s.get('secureAttachment',0)}/100",
+        f"Anxious Attachment Tendency: {s.get('anxiousAttachment',0)}/100",
+        f"Avoidant Attachment Tendency: {s.get('avoidantAttachment',0)}/100",
+        f"Fearful-Avoidant Tendency: {s.get('fearfulAvoidant',0)}/100",
+        f"Red Flag Blindness Risk: {s.get('redFlagBlindness',0)}/100 — {_risk_label(s.get('redFlagBlindness',0))} tendency to rationalise concerning behaviour",
+        f"Overthinking Risk: {s.get('overthinking',0)}/100 — {_risk_label(s.get('overthinking',0))} mental looping and analysis",
+        f"Intuition Trust: {s.get('intuitionTrust',0)}/100 — {_score_label(s.get('intuitionTrust',0))} trust in intuitive signals",
+        f"\"Good On Paper\" Bias: {s.get('goodOnPaperBias',0)}/100 — {_risk_label(s.get('goodOnPaperBias',0))} checklist-driven attraction",
+        f"Emotional Availability Mismatch: {s.get('emotionalAvailabilityMismatch',0)}/100 — {_risk_label(s.get('emotionalAvailabilityMismatch',0))} attraction toward emotionally unavailable types",
+        f"Marriage Readiness: {s.get('marriageReadiness',0)}/100 — {_score_label(s.get('marriageReadiness',0))}",
+        "",
+        "━━━ DERIVED PROFILE ━━━",
+        "",
+        f"Attachment Style: {attachment}",
+        f"Marriage Readiness Type: {mrt}",
+        f"Top 3 Dominant Patterns: {' · '.join(patterns) if patterns else 'Not determined'}",
+    ]
+
+    if contradictions:
+        lines += ["", "━━━ DETECTED CONTRADICTIONS ━━━", ""]
+        for i, c in enumerate(contradictions[:3], 1):
+            label = _CONTRADICTION_LABELS.get(c, c.replace('_', ' ').capitalize())
+            lines.append(f"{i}. {label}")
+
+    lines += [
+        "",
+        "Generate the complete Relationship Clarity Report following the exact section structure and formatting instructions.",
+        "The scorecard section must use the exact dimension scores provided above.",
+    ]
+
+    return "\n".join(lines)
+
+
+_Q3_SECTION_MAP = {
+    "YOUR RELATIONSHIP CLARITY PROFILE":  "clarityProfile",
+    "YOUR STRONGEST PATTERNS":            "strongestPatterns",
+    "YOUR HIDDEN BLIND SPOTS":            "hiddenBlindSpots",
+    "WHAT MAY BE CAUSING YOUR CONFUSION": "confusion",
+    "YOUR RELATIONSHIP DECISION STYLE":   "decisionStyle",
+    "YOUR EMOTIONAL PATTERN IN LOVE":     "emotionalPattern",
+    "YOUR BIGGEST GROWTH EDGE":           "growthEdge",
+    "YOUR PERSONAL CLARITY SCORECARD":    "scorecard",
+    "YOUR JOURNAL PROMPTS":               "journalPrompts",
+    "YOUR NEXT STEP":                     "nextStep",
+}
+
+def _quiz3_section_key(line: str):
+    """Exact-match section headers after stripping markdown/decorators.
+    Substring matching caused body sentences to trigger false header detection."""
+    if len(line) > 60:
+        return None
+    # Strip *, #, _, -, =, spaces and common GPT decorators
+    import re as _re
+    cleaned = _re.sub(r'[^A-Z\s]', '', line.upper()).strip()
+    return _Q3_SECTION_MAP.get(cleaned)
+
+
+def _parse_quiz3_report(raw: str, derived: Dict[str, Any], scores: Dict[str, Any] = None) -> Dict[str, Any]:
+    sections: Dict[str, str] = {}
+    current  = None
+    buffer   = []
+
+    for line in raw.splitlines():
+        stripped = line.strip()
+        upper    = stripped.upper()
+        key      = _quiz3_section_key(upper)
+
+        if key is not None:
+            _flush(sections, current, buffer)
+            current = key
+            buffer  = []
+        elif current:
+            buffer.append(stripped)
+
+    _flush(sections, current, buffer)
+    logger.info(f"[Parser] quiz3 sections found: { {k: bool(v) for k, v in sections.items()} }")
+
+    prompts  = _extract_prompts(sections.get("journalPrompts", ""))
+    next_step = sections.get("nextStep", "")
+    dominant_pattern = (derived.get("dominantPatterns") or ["Clarity Seeker"])[0]
+
+    return {
+        "dominant_pattern":        dominant_pattern,
+        "overall_score":           derived.get("overallScore", 0),
+        "attachment_style":        derived.get("attachmentStyle", ""),
+        "marriage_readiness_type": derived.get("marriageReadinessType", ""),
+        "dominant_patterns":       derived.get("dominantPatterns", []),
+        "raw_text":                raw,
+        "strengths":               sections.get("strongestPatterns", ""),
+        "blind_spots":             sections.get("hiddenBlindSpots", ""),
+        "journal_prompts":         prompts,
+        "next_step":               next_step,
+        "dimensions": {
+            "attachmentStyle":        derived.get("attachmentStyle", ""),
+            "marriageReadinessType":  derived.get("marriageReadinessType", ""),
+            "dominantPatterns":       derived.get("dominantPatterns", []),
+            "overallScore":           derived.get("overallScore", 0),
+            "scores":                 scores or {},
+            "sections": {
+                "clarityProfile":   sections.get("clarityProfile", ""),
+                "confusion":        sections.get("confusion", ""),
+                "decisionStyle":    sections.get("decisionStyle", ""),
+                "emotionalPattern": sections.get("emotionalPattern", ""),
+                "growthEdge":       sections.get("growthEdge", ""),
+                "scorecard":        sections.get("scorecard", ""),
+            }
+        },
+    }
+
+
 # ── AI Clarity Coach ─────────────────────────────────────
 
 async def coach_reply(

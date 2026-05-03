@@ -5,13 +5,14 @@
    Used by both quiz.html and compatibility.html
 ═══════════════════════════════════════════════════ */
 
-import { submitQuiz1, submitQuiz2 } from './api.js';
+import { submitQuiz1, submitQuiz2, submitQuiz3 } from './api.js';
 
 class ClarityQuiz {
   constructor(config) {
-    this.quizType   = config.quizType;   // 'quiz1' | 'quiz2'
-    this.questions  = config.questions;  // array of question objects
-    this.onComplete = config.onComplete; // callback(reportId)
+    this.quizType      = config.quizType;      // 'quiz1' | 'quiz2' | 'quiz3'
+    this.questions     = config.questions;     // array of question objects
+    this.onComplete    = config.onComplete;    // callback(reportId)
+    this.computeScores = config.computeScores; // fn(answers) → { scores, derived } — quiz3 only
 
     this.currentIndex = 0;
     this.answers      = {};
@@ -224,6 +225,15 @@ class ClarityQuiz {
       if (this.quizType === 'quiz1') {
         console.log('[Quiz] Calling submitQuiz1...');
         result = await submitQuiz1(payload);
+      } else if (this.quizType === 'quiz3') {
+        console.log('[Quiz] Computing quiz3 scores...');
+        const scored = this.computeScores(this.answers);
+        console.log('[Quiz] Calling submitQuiz3...', scored);
+        result = await submitQuiz3({
+          ...payload,
+          scores:  scored.scores,
+          derived: scored.derived,
+        });
       } else {
         console.log('[Quiz] Calling submitQuiz2...');
         result = await submitQuiz2({
@@ -233,17 +243,22 @@ class ClarityQuiz {
       }
 
       console.log('[Quiz] Submission successful:', result);
-      /* store report id locally so payment page can use it */
-      localStorage.setItem('cb_report_id', result.report_id);
-      localStorage.setItem('cb_persona', result.archetype || '');
-      localStorage.setItem('cb_score',     result.score || '');
-      localStorage.setItem('cb_quiz_type', this.quizType);
+      localStorage.setItem('cb_report_id',  result.report_id);
+      localStorage.setItem('cb_quiz_type',  this.quizType);
+      if (this.quizType === 'quiz3') {
+        localStorage.setItem('cb_overall_score', result.overall_score || '');
+      } else {
+        localStorage.setItem('cb_persona', result.archetype || '');
+        localStorage.setItem('cb_score',   result.score || '');
+      }
 
       if (this.onComplete) {
         console.log('[Quiz] Calling onComplete callback');
         this.onComplete(result.report_id);
       } else {
-        const redirectUrl = `report.html?id=${result.report_id}`;
+        const redirectUrl = this.quizType === 'quiz3'
+          ? `report3.html?id=${result.report_id}`
+          : `report.html?id=${result.report_id}`;
         console.log('[Quiz] Redirecting to:', redirectUrl);
         window.location.href = redirectUrl;
       }

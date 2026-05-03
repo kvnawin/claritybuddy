@@ -96,6 +96,33 @@ export async function verifyPayment(payload) {
 }
 
 /* ─────────────────────────────────────────
+   QUIZ 3 — Submit Relationship Clarity answers
+   Returns: { report_id, overall_score, attachment_style,
+              marriage_readiness_type, dominant_patterns }
+───────────────────────────────────────── */
+export async function submitQuiz3(payload) {
+  // payload: { name, email, answers, scores, derived }
+  return _request('POST', '/api/submit-quiz3', payload, 90000);
+}
+
+/* ─────────────────────────────────────────
+   REPORT 3 — Get free preview
+   Returns: { report_id, overall_score, attachment_style,
+              marriage_readiness_type, dominant_patterns, scores, paid }
+───────────────────────────────────────── */
+export async function getReport3Preview(reportId) {
+  return _request('GET', `/api/report3/${reportId}`);
+}
+
+/* ─────────────────────────────────────────
+   REPORT 3 — Get full report (paid)
+   Returns: { sections, journal_prompts, next_step, ... }
+───────────────────────────────────────── */
+export async function getReport3Full(reportId) {
+  return _request('GET', `/api/report3/${reportId}/full`);
+}
+
+/* ─────────────────────────────────────────
    COACH — Send chat message (subscribers)
    Returns: { reply: "..." }
 ───────────────────────────────────────── */

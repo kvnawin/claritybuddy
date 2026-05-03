@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Relationship Clarity Report — ClarityBuddy</title>
+  <script>
+    window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
+  </script>
+  <meta name="description" content="Take the 55-question Relationship Clarity Assessment and discover your emotional decision-making patterns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body { background: var(--cream); }
+
+    .quiz-shell {
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .quiz-header {
+      padding: 16px 20px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    @media (min-width: 640px) { .quiz-header { padding: 20px 40px 0; } }
+
+    .quiz-logo {
+      font-family: var(--font-serif);
+      font-size: 18px;
+      color: var(--ink);
+      text-decoration: none;
+    }
+    .quiz-logo em { font-style: italic; color: var(--terra); }
+
+    .quiz-progress-wrap {
+      flex: 1;
+      max-width: 280px;
+    }
+    .quiz-progress-label {
+      font-size: 10px;
+      color: var(--ink-soft);
+      letter-spacing: 0.06em;
+      text-align: right;
+      margin-bottom: 4px;
+    }
+
+    .quiz-section-strip {
+      padding: 10px 20px;
+      background: var(--warm);
+      border-bottom: 1px solid var(--border);
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--terra);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quiz-section-strip::before {
+      content: '';
+      width: 16px;
+      height: 1px;
+      background: var(--terra);
+    }
+    @media (min-width: 640px) { .quiz-section-strip { padding: 10px 40px; } }
+
+    .quiz-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 32px 20px 24px;
+      max-width: 640px;
+      width: 100%;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .quiz-body { padding: 40px 40px 32px; } }
+
+    .quiz-question {
+      font-family: var(--font-serif);
+      font-size: clamp(20px, 5vw, 28px);
+      font-weight: 400;
+      line-height: 1.25;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    .quiz-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .quiz-nav {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 16px;
+    }
+    #btn-back {
+      flex: 0 0 auto;
+      background: transparent;
+      border: 1px solid var(--border-mid);
+      color: var(--ink-soft);
+      font-family: var(--font-sans);
+      font-size: 12px;
+      font-weight: 400;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 14px 20px;
+      cursor: pointer;
+      transition: all var(--transition);
+    }
+    #btn-back:hover { border-color: var(--ink); color: var(--ink); }
+    #btn-next { flex: 1; }
+
+    #quiz-loader {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .loader-ring {
+      width: 52px;
+      height: 52px;
+      border: 2px solid var(--border);
+      border-top-color: var(--terra);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    .loader-title {
+      font-family: var(--font-serif);
+      font-size: 24px;
+      color: var(--ink);
+      margin-bottom: 8px;
+    }
+    .loader-sub {
+      font-size: 13px;
+      color: var(--ink-soft);
+      font-style: italic;
+      max-width: 280px;
+      line-height: 1.7;
+    }
+    .loader-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .loader-step {
+      font-size: 12px;
+      color: var(--ink-soft);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .loader-step-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+    .loader-step.active .loader-step-dot { background: var(--terra); }
+    .loader-step.active { color: var(--ink); }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="quiz-shell">
+
+  <!-- Header -->
+  <header class="quiz-header">
+    <a href="index.html" class="quiz-logo">Clarity<em>Buddy</em></a>
+    <div class="quiz-progress-wrap">
+      <div class="quiz-progress-label" id="progress-text">1 of 55</div>
+      <div class="progress-bar">
+        <div class="progress-bar__fill" id="progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Section label strip -->
+  <div class="quiz-section-strip">
+    <span id="section-label">Relationship Clarity Report</span>
+  </div>
+
+  <!-- Quiz body -->
+  <main id="quiz-body" class="quiz-body">
+    <div id="question-wrap"></div>
+    <div class="quiz-nav">
+      <button id="btn-back" class="hidden">← Back</button>
+      <button id="btn-next" class="btn btn--primary">Continue →</button>
+    </div>
+  </main>
+
+  <!-- Loader -->
+  <div id="quiz-loader" class="hidden">
+    <div class="loader-ring"></div>
+    <div>
+      <p class="loader-title">Analysing your clarity profile…</p>
+      <p class="loader-sub">Our AI is mapping 11 dimensions of your relationship decision-making.</p>
+    </div>
+    <div class="loader-steps">
+      <div class="loader-step active" id="ls-1">
+        <div class="loader-step-dot"></div>
+        <span>Computing your dimension scores</span>
+      </div>
+      <div class="loader-step" id="ls-2">
+        <div class="loader-step-dot"></div>
+        <span>Identifying your emotional patterns</span>
+      </div>
+      <div class="loader-step" id="ls-3">
+        <div class="loader-step-dot"></div>
+        <span>Writing your personalised report</span>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /quiz-shell -->
+
+<script type="module">
+import ClarityQuiz from './js/quiz.js';
+import { Q3_QUESTIONS, buildScoredProfile } from './js/quiz3.js';
+
+new ClarityQuiz({
+  quizType:      'quiz3',
+  questions:     Q3_QUESTIONS,
+  computeScores: buildScoredProfile,
+  onComplete: (reportId) => {
+    let step = 1;
+    const stepInterval = setInterval(() => {
+      step++;
+      const el = document.getElementById(`ls-${step}`);
+      if (el) el.classList.add('active');
+      if (step >= 3) {
+        clearInterval(stepInterval);
+        setTimeout(() => {
+          window.location.href = `report3.html?id=${reportId}`;
+        }, 800);
+      }
+    }, 2000);
+  },
+});
+</script>
+
+</body>
+</html>

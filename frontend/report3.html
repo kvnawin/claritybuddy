@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Relationship Clarity Report — ClarityBuddy</title>
+  <script>
+    window.CB_API_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+  ? 'http://localhost:8000'
+  : 'https://claritybuddy-production.up.railway.app';
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    body { background: var(--cream); padding-top: 64px; }
+    .nav { position: fixed; }
+
+    /* ── Report hero ── */
+    .report-hero {
+      padding: 48px 20px 36px;
+      background: var(--warm);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    @media (min-width: 640px) { .report-hero { padding: 56px 40px 44px; } }
+
+    .report-hero__label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .report-hero__label::before,
+    .report-hero__label::after {
+      content: '';
+      width: 20px;
+      height: 1px;
+      background: var(--terra);
+    }
+
+    .report-hero__score-big {
+      font-family: var(--font-serif);
+      font-size: clamp(56px, 14vw, 88px);
+      font-weight: 400;
+      line-height: 1;
+      color: var(--terra);
+      margin-bottom: 4px;
+    }
+    .report-hero__score-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      margin-bottom: 20px;
+    }
+
+    .report-hero__meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+    .meta-pill {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      font-size: 12px;
+      color: var(--ink-mid);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .meta-pill strong { color: var(--terra); }
+
+    /* ── Report body ── */
+    .report-body {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 20px 80px;
+    }
+    @media (min-width: 640px) { .report-body { padding: 0 40px 80px; } }
+
+    /* ── Dimension scorecard (free) ── */
+    .scorecard {
+      padding: 36px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .scorecard__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 6px;
+    }
+    .scorecard__title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 24px;
+    }
+    .dim-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .dim-item {}
+    .dim-item__header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 5px;
+    }
+    .dim-item__name {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+    .dim-item__score {
+      font-family: var(--font-serif);
+      font-size: 15px;
+      color: var(--terra);
+    }
+    .dim-bar {
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .dim-bar__fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+      border-radius: 2px;
+      width: 0;
+      transition: width 1.2s ease;
+    }
+
+    /* ── Patterns badges ── */
+    .patterns-wrap {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .patterns-wrap__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 6px;
+    }
+    .patterns-wrap__title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+    .pattern-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .pattern-tag {
+      background: var(--warm);
+      border: 1px solid var(--border);
+      color: var(--ink-mid);
+      font-size: 12px;
+      padding: 7px 14px;
+      letter-spacing: 0.02em;
+    }
+
+    /* ── Paywall ── */
+    .paywall {
+      position: relative;
+      margin-top: 8px;
+    }
+    .paywall__blur-content {
+      filter: blur(5px);
+      user-select: none;
+      pointer-events: none;
+      padding: 20px 0;
+    }
+    .paywall__blur-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: var(--ink-mid);
+    }
+    .paywall__overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        transparent 0%,
+        rgba(250,247,242,0.7) 25%,
+        var(--cream) 55%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 20px;
+      z-index: 2;
+    }
+
+    /* ── Unlock card ── */
+    .unlock-card {
+      background: var(--ink);
+      color: var(--cream);
+      padding: 32px 24px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin: 32px 0;
+    }
+    .unlock-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--terra), var(--gold));
+    }
+    .unlock-card__eyebrow {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    .unlock-card__title {
+      font-family: var(--font-serif);
+      font-size: 26px;
+      color: var(--cream);
+      margin-bottom: 12px;
+      line-height: 1.25;
+    }
+    .unlock-card__desc {
+      font-size: 13px;
+      color: rgba(250,247,242,0.6);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      max-width: 340px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .unlock-card__what {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      text-align: left;
+      margin-bottom: 24px;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .unlock-card__item {
+      font-size: 12px;
+      color: rgba(250,247,242,0.7);
+      display: flex;
+      gap: 10px;
+    }
+    .unlock-card__item::before {
+      content: '✓';
+      color: var(--sage);
+      flex-shrink: 0;
+    }
+    .unlock-card__price {
+      font-family: var(--font-serif);
+      font-size: 44px;
+      color: var(--cream);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .unlock-card__price sup {
+      font-size: 20px;
+      font-family: var(--font-sans);
+      font-weight: 300;
+      vertical-align: top;
+      margin-top: 8px;
+      display: inline-block;
+    }
+    .unlock-card__price-note {
+      font-size: 11px;
+      color: rgba(250,247,242,0.4);
+      margin-bottom: 20px;
+    }
+
+    /* ── Full report ── */
+    .full-report { display: none; }
+    .full-report.revealed { display: block; }
+
+    .report-section-full {
+      padding: 32px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .report-section-full:last-child { border-bottom: none; }
+    .report-section-full__label {
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--terra);
+      margin-bottom: 10px;
+    }
+    .report-section-full__title {
+      font-family: var(--font-serif);
+      font-size: 22px;
+      margin-bottom: 14px;
+    }
+    .report-section-full__body {
+      font-size: 14px;
+      line-height: 1.85;
+      color: var(--ink-mid);
+    }
+    .report-section-full__body p + p { margin-top: 12px; }
+
+    /* Journal prompts */
+    .journal-prompts {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 8px;
+    }
+    .journal-prompt {
+      background: var(--warm);
+      border-left: 3px solid var(--terra);
+      padding: 14px 18px;
+      font-family: var(--font-serif);
+      font-size: 15px;
+      font-style: italic;
+      color: var(--ink);
+      line-height: 1.6;
+    }
+
+    /* ── Share ── */
+    .share-section {
+      padding: 32px 0;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .share-title {
+      font-family: var(--font-serif);
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+    .share-sub { font-size: 13px; color: var(--ink-soft); margin-bottom: 20px; }
+    .share-buttons { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+  <a href="index.html" class="nav__logo">Clarity<em>Buddy</em></a>
+</nav>
+
+<!-- Loading state -->
+<div id="page-loader" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;text-align:center;padding:40px 20px;">
+  <div style="width:48px;height:48px;border:2px solid var(--border);border-top-color:var(--terra);border-radius:50%;animation:spin 0.8s linear infinite;"></div>
+  <p style="font-family:var(--font-serif);font-size:20px;color:var(--ink);">Loading your report…</p>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+
+<!-- Report -->
+<div id="report-content" style="display:none;">
+
+  <!-- Hero: overall score + labels (always free) -->
+  <section class="report-hero">
+    <div class="report-hero__label">Relationship Clarity Report</div>
+    <div class="report-hero__score-big" id="overall-score">—</div>
+    <div class="report-hero__score-label">Overall Clarity Score / 100</div>
+    <div class="report-hero__meta" id="hero-meta">
+      <!-- injected by JS: Attachment Style + Marriage Readiness Type -->
+    </div>
+  </section>
+
+  <!-- Report body -->
+  <div class="report-body">
+
+    <!-- FREE: 11 Dimension scorecard -->
+    <div class="scorecard animate-fadeup delay-1">
+      <div class="scorecard__eyebrow">Your Clarity Scorecard</div>
+      <h2 class="scorecard__title">How you score across 11 dimensions</h2>
+      <div class="dim-list" id="dim-list">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- FREE: Dominant patterns -->
+    <div class="patterns-wrap animate-fadeup delay-2">
+      <div class="patterns-wrap__eyebrow">Your Dominant Patterns</div>
+      <h2 class="patterns-wrap__title">The emotional patterns shaping your decisions</h2>
+      <div class="pattern-tags" id="pattern-tags">
+        <!-- injected by JS -->
+      </div>
+    </div>
+
+    <!-- PAYWALL -->
+    <div id="paywall-section">
+
+      <div class="paywall animate-fadeup delay-3">
+        <div class="paywall__blur-content">
+          <div class="paywall__blur-text">
+            <p><strong>Your Relationship Clarity Profile</strong></p>
+            <p>Your scores reveal a deeply self-aware woman who understands what she values emotionally — but the way these patterns interact tells a more layered story. There is a tension between your genuine desire for emotional safety and the type of connection that actually pulls your attention. That tension is not a flaw. It is a signal worth understanding before your next decision.</p>
+            <br>
+            <p><strong>Your Strongest Patterns</strong></p>
+            <p>Your intuition is one of your most underused assets. You have moments of sharp clarity — where you know something is off before you can articulate why. The challenge is what you do with that knowing. Understanding where your strength already exists is the first step to trusting it fully.</p>
+          </div>
+        </div>
+        <div class="paywall__overlay">
+          <p style="font-size:12px;color:var(--ink-soft);margin-bottom:12px;">Your full 10-section report is ready</p>
+          <button class="btn btn--primary btn--full" onclick="scrollToUnlock()">Unlock Full Report ₹299 →</button>
+        </div>
+      </div>
+
+      <!-- Unlock card -->
+      <div class="unlock-card animate-fadeup" id="unlock-card">
+        <div class="unlock-card__eyebrow">Unlock Your Full Report</div>
+        <h2 class="unlock-card__title">Your scorecard shows <em style="color:var(--gold)">what</em> the patterns are.<br>The full report tells you <em style="color:var(--gold)">why.</em></h2>
+        <p class="unlock-card__desc">10 sections written specifically from your 55 answers — not a template. The most comprehensive relationship clarity report available.</p>
+
+        <div class="unlock-card__what">
+          <div class="unlock-card__item">Your Relationship Clarity Profile</div>
+          <div class="unlock-card__item">Your Strongest Patterns — named precisely</div>
+          <div class="unlock-card__item">Your Hidden Blind Spots — explained compassionately</div>
+          <div class="unlock-card__item">What May Be Causing Your Confusion</div>
+          <div class="unlock-card__item">Your Relationship Decision Style</div>
+          <div class="unlock-card__item">Your Emotional Pattern in Love</div>
+          <div class="unlock-card__item">Your Biggest Growth Edge</div>
+          <div class="unlock-card__item">3 personalised journal prompts</div>
+          <div class="unlock-card__item">Your clear next step</div>
+        </div>
+
+        <div class="unlock-card__price"><sup>₹</sup>299</div>
+        <p class="unlock-card__price-note">One-time · Full 10-section Relationship Clarity Report</p>
+
+        <button id="btn-unlock" class="btn btn--cream btn--full btn--lg" onclick="handleUnlock()">
+          Unlock My Full Report →
+        </button>
+
+        <p style="font-size:11px;color:rgba(250,247,242,0.35);margin-top:14px;">
+          Secure payment via Razorpay · UPI, Cards, NetBanking accepted
+        </p>
+      </div>
+
+    </div><!-- /paywall-section -->
+
+    <!-- FULL REPORT (revealed after payment) -->
+    <div id="full-report" class="full-report">
+
+      <div class="report-section-full animate-fadeup">
+        <div class="report-section-full__label">Your Profile</div>
+        <h3 class="report-section-full__title">Your Relationship Clarity Profile</h3>
+        <div class="report-section-full__body" id="sec-profile"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-1">
+        <div class="report-section-full__label">Your Strengths</div>
+        <h3 class="report-section-full__title">Your Strongest Patterns</h3>
+        <div class="report-section-full__body" id="sec-strengths"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-2">
+        <div class="report-section-full__label">Blind Spots</div>
+        <h3 class="report-section-full__title">Your Hidden Blind Spots</h3>
+        <div class="report-section-full__body" id="sec-blindspots"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-3">
+        <div class="report-section-full__label">Confusion Sources</div>
+        <h3 class="report-section-full__title">What May Be Causing Your Confusion</h3>
+        <div class="report-section-full__body" id="sec-confusion"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup">
+        <div class="report-section-full__label">Decision Style</div>
+        <h3 class="report-section-full__title">Your Relationship Decision Style</h3>
+        <div class="report-section-full__body" id="sec-decisionstyle"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-1">
+        <div class="report-section-full__label">Emotional Pattern</div>
+        <h3 class="report-section-full__title">Your Emotional Pattern in Love</h3>
+        <div class="report-section-full__body" id="sec-emotionalpattern"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-2">
+        <div class="report-section-full__label">Growth Edge</div>
+        <h3 class="report-section-full__title">Your Biggest Growth Edge</h3>
+        <div class="report-section-full__body" id="sec-growthedge"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup delay-3">
+        <div class="report-section-full__label">Journal Prompts</div>
+        <h3 class="report-section-full__title">Questions to sit with</h3>
+        <div class="journal-prompts" id="sec-prompts"></div>
+      </div>
+
+      <div class="report-section-full animate-fadeup">
+        <div class="report-section-full__label">Your Next Step</div>
+        <h3 class="report-section-full__title">Where to go from here</h3>
+        <div class="report-section-full__body" id="sec-nextstep"></div>
+      </div>
+
+      <!-- Share -->
+      <div class="share-section">
+        <h3 class="share-title">Save or share your report</h3>
+        <p class="share-sub">Keep it, reflect on it, or share it with someone you trust.</p>
+        <div class="share-buttons">
+          <button class="btn btn--primary btn--sm" id="btn-download" onclick="downloadReport3()">Download PDF</button>
+          <button class="btn btn--outline btn--sm" onclick="shareWhatsApp()">Share on WhatsApp</button>
+          <button class="btn btn--outline btn--sm" onclick="copyLink()">Copy Link</button>
+        </div>
+      </div>
+
+    </div><!-- /full-report -->
+
+  </div><!-- /report-body -->
+</div><!-- /report-content -->
+
+<div id="cb-toast" class="toast"></div>
+
+<script type="module">
+import { getReport3Preview, getReport3Full } from './js/api.js';
+
+async function openCheckout(reportId, plan, userInfo) {
+  const { openCheckout: _open } = await import('./js/payment.js');
+  return _open(reportId, plan, userInfo);
+}
+
+/* Dimension display labels + order */
+const DIM_LABELS = [
+  { key: 'identityClarity',              label: 'Identity Clarity' },
+  { key: 'emotionalStability',           label: 'Emotional Stability' },
+  { key: 'boundaryStrength',             label: 'Boundary Strength' },
+  { key: 'pressureVulnerability',        label: 'Pressure Vulnerability' },
+  { key: 'selfTrust',                    label: 'Self-Trust' },
+  { key: 'redFlagBlindness',             label: 'Red Flag Blindness Risk' },
+  { key: 'overthinking',                 label: 'Overthinking vs Intuition' },
+  { key: 'goodOnPaperBias',              label: '"Good On Paper" Bias' },
+  { key: 'emotionalAvailabilityMismatch',label: 'Emotional Availability Match' },
+  { key: 'marriageReadiness',            label: 'Marriage Readiness' },
+  { key: 'secureAttachment',             label: 'Secure Attachment Tendency' },
+];
+
+/* Risk dims: high score = worse → bar colour shifts */
+const RISK_DIMS = new Set(['pressureVulnerability', 'redFlagBlindness', 'overthinking', 'goodOnPaperBias', 'emotionalAvailabilityMismatch']);
+
+let currentReportId = null;
+
+async function init() {
+  const params   = new URLSearchParams(window.location.search);
+  const reportId = params.get('id') || localStorage.getItem('cb_report_id');
+  const unlocked = params.get('unlocked') === '1';
+
+  if (!reportId) {
+    window.location.href = 'quiz3.html';
+    return;
+  }
+
+  currentReportId = reportId;
+
+  try {
+    if (unlocked) {
+      await loadFullReport(reportId);
+    } else {
+      await loadPreview(reportId);
+    }
+  } catch (err) {
+    showToast('Could not load your report. Please try again.');
+    document.getElementById('page-loader').style.display = 'none';
+  }
+}
+
+async function loadPreview(reportId) {
+  const data = await getReport3Preview(reportId);
+
+  if (data.paid) {
+    await loadFullReport(reportId);
+    return;
+  }
+
+  renderHero(data.overall_score);
+  renderMeta(data.attachment_style, data.marriage_readiness_type);
+  renderDimensions(data.scores);
+  renderPatterns(data.dominant_patterns);
+
+  document.getElementById('page-loader').style.display = 'none';
+  document.getElementById('report-content').style.display = 'block';
+
+  animateScoreBars(data.scores);
+}
+
+async function loadFullReport(reportId) {
+  const data = await getReport3Full(reportId);
+
+  renderHero(data.overall_score);
+  renderMeta(data.attachment_style, data.marriage_readiness_type);
+  renderDimensions(data.scores);
+  renderPatterns(data.dominant_patterns);
+
+  /* hide paywall, show full report */
+  document.getElementById('paywall-section').style.display = 'none';
+  document.getElementById('full-report').classList.add('revealed');
+
+  /* render all sections */
+  const s = data.sections || {};
+  renderSection('sec-profile',         s.clarityProfile       || s.profile || '');
+  renderSection('sec-strengths',       s.strongestPatterns    || data.strengths || '');
+  renderSection('sec-blindspots',      s.hiddenBlindSpots     || data.blind_spots || '');
+  renderSection('sec-confusion',       s.confusion            || '');
+  renderSection('sec-decisionstyle',   s.decisionStyle        || '');
+  renderSection('sec-emotionalpattern',s.emotionalPattern     || '');
+  renderSection('sec-growthedge',      s.growthEdge           || '');
+  renderPrompts(data.journal_prompts);
+  renderSection('sec-nextstep',        data.next_step         || '');
+
+  document.getElementById('page-loader').style.display = 'none';
+  document.getElementById('report-content').style.display = 'block';
+
+  animateScoreBars(data.scores);
+}
+
+function renderHero(score) {
+  document.getElementById('overall-score').textContent = score ?? '—';
+  document.title = `Your Relationship Clarity Report — ClarityBuddy`;
+}
+
+function renderMeta(attachmentStyle, marriageReadinessType) {
+  const el = document.getElementById('hero-meta');
+  el.innerHTML = `
+    <div class="meta-pill"><strong>Attachment:</strong> ${attachmentStyle || '—'}</div>
+    <div class="meta-pill"><strong>Readiness:</strong> ${marriageReadinessType || '—'}</div>
+  `;
+}
+
+function renderDimensions(scores) {
+  if (!scores) return;
+  const list = document.getElementById('dim-list');
+  list.innerHTML = DIM_LABELS.map(({ key, label }) => {
+    const score = scores[key] ?? 0;
+    return `
+      <div class="dim-item">
+        <div class="dim-item__header">
+          <span class="dim-item__name">${label}</span>
+          <span class="dim-item__score">${score}/100</span>
+        </div>
+        <div class="dim-bar">
+          <div class="dim-bar__fill" data-score="${score}" style="width:0%"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function animateScoreBars(scores) {
+  if (!scores) return;
+  setTimeout(() => {
+    document.querySelectorAll('.dim-bar__fill').forEach(el => {
+      const s = parseInt(el.dataset.score, 10);
+      el.style.width = s + '%';
+    });
+  }, 300);
+}
+
+function renderPatterns(patterns) {
+  const el = document.getElementById('pattern-tags');
+  if (!patterns?.length) { el.innerHTML = '<span class="pattern-tag">Processing…</span>'; return; }
+  el.innerHTML = patterns.map(p => `<div class="pattern-tag">${p}</div>`).join('');
+}
+
+function renderSection(id, content) {
+  if (!content) return;
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = content
+    .split('\n')
+    .filter(l => l.trim())
+    .map(l => `<p>${l}</p>`)
+    .join('');
+}
+
+function renderPrompts(prompts) {
+  if (!prompts?.length) return;
+  const el = document.getElementById('sec-prompts');
+  el.innerHTML = prompts.map(p => `<div class="journal-prompt">${p}</div>`).join('');
+}
+
+/* ── Payment ── */
+window.scrollToUnlock = function() {
+  document.getElementById('unlock-card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+};
+
+window.handleUnlock = async function() {
+  const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (isDev) {
+    await loadFullReport(currentReportId);
+    return;
+  }
+  const userInfo = {
+    name:  localStorage.getItem('cb_user_name')  || '',
+    email: localStorage.getItem('cb_user_email') || '',
+  };
+  await openCheckout(currentReportId, 'quiz3', userInfo);
+};
+
+/* ── Share ── */
+window.shareWhatsApp = function() {
+  const text = encodeURIComponent(`I just got my Relationship Clarity Report on ClarityBuddy. Check it out: ${window.location.href}`);
+  window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+};
+
+window.copyLink = function() {
+  navigator.clipboard.writeText(window.location.href)
+    .then(() => showToast('Link copied!'))
+    .catch(() => showToast('Could not copy link.'));
+};
+
+function showToast(msg) {
+  let toast = document.getElementById('cb-toast');
+  if (!toast) { toast = document.createElement('div'); toast.id = 'cb-toast'; toast.className = 'toast'; document.body.appendChild(toast); }
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3500);
+}
+
+/* ── PDF Download ── */
+function _pdfText(text) {
+  if (!text) return '';
+  return text
+    .replace(/[''ʼ]/g, "'")
+    .replace(/[""]/g, '"')
+    .replace(/[—–]/g, '--')
+    .replace(/•/g, '*')
+    .replace(/…/g, '...')
+    .replace(/ /g, ' ')
+    .replace(/[^\x00-\xFF]/g, '?');
+}
+
+async function _loadJsPDF() {
+  if (window.jspdf) return;
+  await new Promise((res, rej) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+    s.onload = res; s.onerror = rej;
+    document.head.appendChild(s);
+  });
+}
+
+async function _embedGoogleFont(doc, family, weight, style) {
+  try {
+    const url = `https://raw.githubusercontent.com/google/fonts/main/ofl/${family.toLowerCase().replace(/ /g,'')}/static/${family.replace(/ /g,'')}${weight === '400' ? '' : '-'+weight}${style === 'italic' ? 'Italic' : ''}.ttf`;
+    const res = await fetch(url);
+    if (!res.ok) return false;
+    const buf  = await res.arrayBuffer();
+    const b64  = btoa(String.fromCharCode(...new Uint8Array(buf)));
+    const name = `${family}-${weight}-${style}`;
+    doc.addFileToVFS(`${name}.ttf`, b64);
+    doc.addFont(`${name}.ttf`, family, style === 'italic' ? 'italic' : 'normal');
+    return true;
+  } catch { return false; }
+}
+
+window.downloadReport3 = async function() {
+  const btn = document.getElementById('btn-download');
+  if (btn) { btn.textContent = 'Preparing…'; btn.disabled = true; }
+
+  try {
+    await _loadJsPDF();
+
+    const overallScore        = document.getElementById('overall-score').textContent;
+    const attachmentStyle     = document.querySelector('.meta-pill:nth-child(1)')?.textContent.replace('Attachment:', '').trim() || '';
+    const readinessType       = document.querySelector('.meta-pill:nth-child(2)')?.textContent.replace('Readiness:', '').trim() || '';
+    const patterns            = Array.from(document.querySelectorAll('#pattern-tags .pattern-tag')).map(el => el.textContent.trim());
+
+    const dims = Array.from(document.querySelectorAll('.dim-item')).map(el => ({
+      name:  el.querySelector('.dim-item__name')?.textContent || '',
+      score: el.querySelector('.dim-item__score')?.textContent || '',
+    }));
+
+    const sections = [
+      { label: 'Your Relationship Clarity Profile', id: 'sec-profile' },
+      { label: 'Your Strongest Patterns',           id: 'sec-strengths' },
+      { label: 'Your Hidden Blind Spots',           id: 'sec-blindspots' },
+      { label: 'What May Be Causing Your Confusion',id: 'sec-confusion' },
+      { label: 'Your Relationship Decision Style',  id: 'sec-decisionstyle' },
+      { label: 'Your Emotional Pattern in Love',    id: 'sec-emotionalpattern' },
+      { label: 'Your Biggest Growth Edge',          id: 'sec-growthedge' },
+    ].map(s => ({ label: s.label, text: _pdfText(document.getElementById(s.id)?.innerText || '') }))
+     .filter(s => s.text.trim());
+
+    const prompts  = Array.from(document.querySelectorAll('#sec-prompts .journal-prompt')).map(el => _pdfText(el.innerText.trim()));
+    const nextStep = _pdfText(document.getElementById('sec-nextstep')?.innerText || '');
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+    const [pfOk, pfItalicOk, jostOk] = await Promise.all([
+      _embedGoogleFont(doc, 'Playfair Display', '400', 'normal'),
+      _embedGoogleFont(doc, 'Playfair Display', '400', 'italic'),
+      _embedGoogleFont(doc, 'Jost', '400', 'normal'),
+    ]);
+    const SERIF   = pfOk       ? 'Playfair Display' : 'times';
+    const SERIF_I = pfItalicOk ? 'Playfair Display' : 'times';
+    const SANS    = jostOk     ? 'Jost'             : 'helvetica';
+
+    const PW = 210, PH = 297, ML = 18, MR = 18, CW = PW - ML - MR, BOTTOM = PH - 16;
+    let y = 0;
+
+    const C = {
+      terra:  [192, 100,  74], gold:   [201, 160,  96],
+      ink:    [ 40,  30,  26], inkMid: [ 90,  69,  64],
+      inkSoft:[140, 117, 112], cream:  [250, 247, 242],
+      warm:   [244, 237, 227], border: [220, 210, 205],
+    };
+
+    const setFill  = c => doc.setFillColor(...c);
+    const setDraw  = c => doc.setDrawColor(...c);
+    const setColor = c => doc.setTextColor(...c);
+    const setFont  = (f, s, st = 'normal') => { doc.setFont(f, st); doc.setFontSize(s); };
+
+    const _drawFooter = () => {
+      setDraw(C.border); doc.setLineWidth(0.3);
+      doc.line(ML, PH - 12, PW - MR, PH - 12);
+      setFont(SANS, 7); setColor(C.inkSoft);
+      doc.text('Generated by ClarityBuddy  ·  claritybuddy.in  ·  Relationship Clarity Framework', PW / 2, PH - 7, { align: 'center' });
+    };
+
+    const newPageIfNeeded = (need) => {
+      if (y + need > BOTTOM) {
+        _drawFooter(); doc.addPage();
+        setFill(C.cream); doc.rect(0, 0, PW, PH, 'F');
+        y = 14;
+      }
+    };
+
+    const addText = (text, x, maxW, lineH, gap) => {
+      for (const line of doc.splitTextToSize(text, maxW)) {
+        newPageIfNeeded(lineH + 2);
+        doc.text(line, x, y); y += lineH;
+      }
+      if (gap) y += 3;
+    };
+
+    const divider = () => {
+      newPageIfNeeded(12);
+      setDraw(C.border); doc.setLineWidth(0.3);
+      doc.line(ML, y, PW - MR, y); y += 8;
+    };
+
+    const sectionLabel = (lbl) => {
+      newPageIfNeeded(10);
+      setFont(SANS, 7); setColor(C.terra);
+      doc.text(lbl.toUpperCase(), ML, y, { charSpace: 0.8 }); y += 6;
+    };
+
+    /* ── PAGE 1 HEADER ── */
+    setFill(C.cream); doc.rect(0, 0, PW, PH, 'F');
+    setFill(C.terra); doc.rect(0, 0, PW * 0.55, 3, 'F');
+    setFill(C.gold);  doc.rect(PW * 0.55, 0, PW * 0.45, 3, 'F');
+    setFill(C.warm);  doc.rect(0, 3, PW, 72, 'F');
+
+    y = 14;
+    setFont(SANS, 7); setColor(C.terra);
+    doc.text('YOUR RELATIONSHIP CLARITY REPORT  ·  CLARITYBUDDY', PW / 2, y, { align: 'center', charSpace: 0.8 });
+    y += 12;
+
+    /* Big score */
+    setFont(SERIF, 52); setColor(C.terra);
+    doc.text(overallScore, PW / 2, y + 10, { align: 'center' });
+    y += 18;
+
+    setFont(SANS, 7); setColor(C.inkSoft);
+    doc.text('OVERALL CLARITY SCORE / 100', PW / 2, y, { align: 'center', charSpace: 0.5 });
+    y += 9;
+
+    /* Score bar */
+    const scorePct = Math.min(parseInt(overallScore, 10) / 100, 1) || 0;
+    setFill(C.border); doc.roundedRect(ML, y - 2, CW, 2.5, 1, 1, 'F');
+    setFill(C.terra);  doc.roundedRect(ML, y - 2, CW * scorePct, 2.5, 1, 1, 'F');
+    y += 8;
+
+    /* Meta pills */
+    setFont(SANS, 8); setColor(C.inkMid);
+    doc.text(`Attachment: ${_pdfText(attachmentStyle)}`, PW / 2 - 40, y, { align: 'right' });
+    doc.text(`Readiness: ${_pdfText(readinessType)}`,   PW / 2 + 40, y, { align: 'right' });
+    y = 82;
+
+    /* ── DIMENSION SCORECARD ── */
+    divider();
+    sectionLabel('Your Clarity Scorecard — 11 Dimensions');
+    setFont(SANS, 8); setColor(C.inkMid);
+    const colW = CW / 2 - 4;
+    for (let i = 0; i < dims.length; i++) {
+      const col = i % 2;
+      if (col === 0) newPageIfNeeded(12);
+      const x = ML + col * (colW + 8);
+      if (col === 0 && i > 0) y += 0;
+      setFont(SANS, 7); setColor(C.inkSoft);
+      doc.text(_pdfText(dims[i].name), x, y);
+      setFont(SANS, 8); setColor(C.terra);
+      doc.text(dims[i].score, x + colW, y, { align: 'right' });
+      const bY = y + 1.5;
+      const scoreInt = parseInt(dims[i].score, 10) || 0;
+      setFill(C.border); doc.roundedRect(x, bY, colW, 1.5, 0.5, 0.5, 'F');
+      setFill(C.terra);  doc.roundedRect(x, bY, colW * scoreInt / 100, 1.5, 0.5, 0.5, 'F');
+      if (col === 1 || i === dims.length - 1) y += 9;
+    }
+
+    /* ── DOMINANT PATTERNS ── */
+    if (patterns.length) {
+      divider();
+      sectionLabel('Your Dominant Patterns');
+      setFont(SERIF, 10); setColor(C.inkMid);
+      addText(patterns.join('  ·  '), ML, CW, 5.5, true);
+    }
+
+    /* ── NARRATIVE SECTIONS ── */
+    for (const sec of sections) {
+      divider();
+      sectionLabel(sec.label);
+      setFont(SERIF, 11); setColor(C.inkMid);
+      for (const para of sec.text.split('\n').filter(l => l.trim())) {
+        addText(para, ML, CW, 5.5, true);
+      }
+    }
+
+    /* ── JOURNAL PROMPTS ── */
+    if (prompts.length) {
+      divider();
+      sectionLabel('Journal Prompts');
+      for (const p of prompts) {
+        newPageIfNeeded(18);
+        setFill(C.warm); doc.rect(ML, y - 4, CW, 14, 'F');
+        setFill(C.terra); doc.rect(ML, y - 4, 2, 14, 'F');
+        setFont(SERIF, 10); setColor(C.ink); doc.setFont(SERIF, 'italic');
+        for (const line of doc.splitTextToSize(p, CW - 8)) {
+          doc.text(line, ML + 6, y); y += 5;
+        }
+        y += 6;
+      }
+    }
+
+    /* ── NEXT STEP ── */
+    if (nextStep.trim()) {
+      divider();
+      sectionLabel('Your Next Step');
+      setFont(SERIF, 11); setColor(C.inkMid);
+      for (const para of nextStep.split('\n').filter(l => l.trim())) {
+        addText(para, ML, CW, 5.5, true);
+      }
+    }
+
+    _drawFooter();
+    doc.save('ClarityBuddy-Relationship-Clarity-Report.pdf');
+
+  } catch (err) {
+    console.error('[PDF]', err);
+    showToast('Could not generate PDF. Please try again.');
+  } finally {
+    if (btn) { btn.textContent = 'Download PDF'; btn.disabled = false; }
+  }
+};
+
+init();
+</script>
+
+</body>
+</html>
